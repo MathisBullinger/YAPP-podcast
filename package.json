@@ -1,0 +1,43 @@
+{
+  "name": "yapp-podcast",
+  "version": "1.0.0",
+  "description": "YAPP Podcast Service",
+  "main": "src/handler.js",
+  "scripts": {
+    "start:offline": "sls offline",
+    "logs": "sls logs -f podcast",
+    "logs:watch": "sls logs -f podcast -t",
+    "deploy": "sls deploy",
+    "deploy:function": "sls deploy function -f podcast",
+    "format:check": "prettier --check \"./*.js\" \"./**/*.js\"",
+    "format:write": "prettier --write \"./*.js\" \"./**/*.js\"",
+    "lint:check": "eslint . --ext .js",
+    "lint:write": "eslint . --ext .js --fix",
+    "format-lint:check": "npm run lint:check && npm run format:check",
+    "format-lint:write": "npm run lint:write && npm run format:write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MathisBullinger/YAPP-podcast.git"
+  },
+  "author": "Mathis Bullinger",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MathisBullinger/YAPP-podcast/issues"
+  },
+  "homepage": "https://github.com/MathisBullinger/YAPP-podcast#readme",
+  "dependencies": {
+    "@sentry/node": "^5.5.0",
+    "apollo-server-lambda": "^2.6.7",
+    "graphql": "^14.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.0.1",
+    "serverless-offline": "^5.7.2",
+    "serverless-webpack": "^5.3.1",
+    "webpack": "^4.35.0"
+  }
+}
