@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/MathisBullinger/YAPP-podcast#readme",
   "dependencies": {
+    "@apollo/federation": "^0.7.0",
     "@sentry/node": "^5.5.0",
     "apollo-server-lambda": "^2.6.7",
     "axios": "^0.19.0",

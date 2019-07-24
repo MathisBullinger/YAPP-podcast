@@ -2,6 +2,7 @@ import { ApolloServer } from 'apollo-server-lambda'
 import * as Sentry from '@sentry/node'
 import typeDefs from './schema.gql'
 import resolvers from './resolvers'
+import { buildFederatedSchema } from '@apollo/federation'
 
 export const podcast = async (event, context) => {
   Sentry.init({
@@ -9,8 +10,7 @@ export const podcast = async (event, context) => {
   })
 
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     formatError: error => {
       Sentry.captureException(error)
       return error
