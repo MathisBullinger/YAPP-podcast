@@ -1,5 +1,11 @@
+type Podcast {
+  itunesId: ID
+  name: String
+  creator: String
+}
+
 type Query {
-  hello: String!
+  search(name: String!, first: Int = 20): [Podcast!]!
 }
 
 schema {
