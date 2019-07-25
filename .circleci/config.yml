@@ -1,10 +1,5 @@
 version: 2
 
-general:
-  branches:
-    only:
-      - master
-
 jobs:
   build:
     docker:
@@ -47,3 +42,11 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+
+workflow:
+  build-and-deploy:
+    jobs:
+      -build:
+        filters:
+          branches:
+            only: master
