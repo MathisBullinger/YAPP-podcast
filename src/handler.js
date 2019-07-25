@@ -6,26 +6,26 @@ import { buildFederatedSchema } from '@apollo/federation'
 
 export const podcast = async (event, context) => {
   Sentry.init({
-    dsn: 'https://cbf2bcf6423f40439af579143e57a69c@sentry.io/1512573'
+    dsn: 'https://cbf2bcf6423f40439af579143e57a69c@sentry.io/1512573',
   })
 
   const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     engine: {
-      apiKey: process.env.APOLLO_API_KEY
+      apiKey: process.env.APOLLO_API_KEY,
     },
     formatError: error => {
       Sentry.captureException(error)
       return error
-    }
+    },
   })
   const handler = server.createHandler({
     ...(process.env.stage === 'dev' && {
       cors: {
         origin: '*',
-        credentials: true
-      }
-    })
+        credentials: true,
+      },
+    }),
   })
 
   const response = await new Promise((resolve, reject) => {

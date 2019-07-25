@@ -9,15 +9,15 @@ export default {
           params: {
             media: 'podcast',
             term: name,
-            limit: first
-          }
+            limit: first,
+          },
         }
       )
       return itunesResult.results.map(res => ({
         itunesId: res.collectionId,
         name: res.collectionName,
-        creator: res.artistName
+        creator: res.artistName,
       }))
-    }
-  }
+    },
+  },
 }
