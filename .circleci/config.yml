@@ -43,7 +43,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-workflow:
+workflows:
   build-and-deploy:
     jobs:
       -build:
