@@ -21,6 +21,7 @@ functions:
           cors: true
     environment:
       stage: ${self:provider.stage}
+      APOLLO_API_KEY: ${ssm:APOLLO_API_KEY}
 
 plugins:
   - serverless-webpack
