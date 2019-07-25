@@ -11,6 +11,9 @@ export const podcast = async (event, context) => {
 
   const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
+    engine: {
+      apiKey: process.env.APOLLO_API_KEY
+    },
     formatError: error => {
       Sentry.captureException(error)
       return error
