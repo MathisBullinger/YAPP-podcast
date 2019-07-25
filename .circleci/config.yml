@@ -23,20 +23,20 @@ jobs:
             - v1-dependencies-
 
       - run:
-        name: Install Serverless CLI
-        command: sudo npm install --global serverless
+          name: Install Serverless CLI
+          command: sudo npm install --global serverless
 
       - run:
-        name: Install Apollo CLI
-        command: sudo npm install --global apollo
+          name: Install Apollo CLI
+          command: sudo npm install --global apollo
 
       - run:
-        name: Install Dependencies
-        command: npm install
+          name: Install Dependencies
+          command: npm install
 
       - run:
-        name: Deploy application
-        command: sls deploy
+          name: Deploy application
+          command: sls deploy
 
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
