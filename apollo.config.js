@@ -1,5 +1,7 @@
 module.exports = {
   service: {
-    localSchemaFile: './src/schema.gql',
+    endpoint: {
+      url: 'https://83pzen9as1.execute-api.us-east-1.amazonaws.com/dev',
+    },
   },
 }
