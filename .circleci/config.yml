@@ -35,7 +35,7 @@ jobs:
 
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            apollo service:push --tag=master
+            apollo service:push
           fi
 
       - save_cache:
