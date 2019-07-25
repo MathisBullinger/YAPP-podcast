@@ -1,13 +1,8 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/node:8.10
+      - image: circleci/node:8
 
     working_directory: ~/repo
 
@@ -22,16 +17,36 @@ jobs:
             - v1-dependencies-
 
       - run:
-          name: Install Serverless CLI and dependencies
-          command: |
-            sudo npm i -g serverless
-            npm install
+        name: Install Serverless CLI
+        command: sudo npm install --global serverless
+
+      - run:
+        name: Install Apollo CLI
+        command: sudo npm install --global apollo
+
+      - run:
+        name: Install Dependencies
+        command: npm install
 
       - run:
           name: Deploy application
           command: sls deploy
 
+      - run: |
+          if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            apollo service:push --tag=master
+          fi
+
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+        filters:
+          branches:
+            only: master
