@@ -35,8 +35,8 @@ jobs:
         command: npm install
 
       - run:
-          name: Deploy application
-          command: sls deploy
+        name: Deploy application
+        command: sls deploy
 
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
