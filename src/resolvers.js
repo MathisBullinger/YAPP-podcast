@@ -1,5 +1,20 @@
 import axios from 'axios'
 
+function mapItunesData(data) {
+  const artworks = Object.keys(data)
+    .filter(key => key.startsWith('artworkUrl'))
+    .map(key => ({
+      url: data[key],
+      size: parseInt(key.replace('artworkUrl', ''), 10) || null,
+    }))
+  return {
+    itunesId: data.collectionId,
+    name: data.collectionName,
+    creator: data.artistName,
+    ...(artworks && { artworks }),
+  }
+}
+
 export default {
   Query: {
     search: async (root, { name, first }) => {
@@ -13,21 +28,22 @@ export default {
         },
       })
 
-      return itunesResult.map(res => {
-        const artworks = Object.keys(res)
-          .filter(key => key.startsWith('artworkUrl'))
-          .map(key => ({
-            url: res[key],
-            size: parseInt(key.replace('artworkUrl', ''), 10) || null,
-          }))
+      return itunesResult.map(res => mapItunesData(res))
+    },
 
-        return {
-          itunesId: res.collectionId,
-          name: res.collectionName,
-          creator: res.artistName,
-          ...(artworks && { artworks }),
-        }
+    podcast: async (root, { itunesId }) => {
+      const {
+        data: { results: itunesResult },
+      } = await axios.get('https://itunes.apple.com/search', {
+        params: {
+          media: 'podcast',
+          term: itunesId,
+          limit: 1,
+        },
       })
+
+      if (itunesResult.length === 0) return
+      return mapItunesData(itunesResult[0])
     },
   },
 
