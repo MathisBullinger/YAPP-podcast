@@ -1,4 +1,5 @@
 import axios from 'axios'
+import parser from './parser'
 
 function mapItunesData(data) {
   const artworks = Object.keys(data)
@@ -12,6 +13,7 @@ function mapItunesData(data) {
     name: data.collectionName,
     creator: data.artistName,
     ...(artworks && { artworks }),
+    feed: data.feedUrl,
   }
 }
 
@@ -65,5 +67,19 @@ export default {
         : artworks.find(
           art => art.size === Math.max(...artworks.map(art => art.size))
         ),
+
+    episodes: async ({ feed }) =>
+      !feed
+        ? null
+        : (await axios({
+          method: 'get',
+          url: feed,
+          responseType: 'stream',
+        }).then(
+          response =>
+            new Promise((resolve, reject) =>
+              parser(response.data, resolve, reject)
+            )
+        )).episodes,
   },
 }
