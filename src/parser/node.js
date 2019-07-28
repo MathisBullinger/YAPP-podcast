@@ -7,19 +7,24 @@ export default class Node {
   }
 
   setParent(parent) {
-    if (!(parent instanceof Node)) throw Error('parent must be node')
-    this.parent = parent
+    if (!(parent instanceof Node)) throw Error('_parent must be node')
+    this._parent = parent
   }
 
   push(child) {
     if (!(child instanceof Node)) throw new Error('child must be node')
     child.setParent(this)
-    this.children.push(child)
+    this._children.push(child)
     return child
   }
 
   root() {
-    if (this.parent === null) return this
-    return this.parent.root()
+    if (this._parent === null) return this
+    return this._parent.root()
+  }
+
+  printTree() {
+    if (process.env.NODE_ENV === 'development')
+      require('./prettyPrint').default(this)
   }
 }
