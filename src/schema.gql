@@ -5,11 +5,17 @@ type Podcast {
   artwork: Artwork
   thumbnail: Artwork
   artworks: [Artwork!]
+  feed: String
+  episodes: [Episode!]
 }
 
 type Artwork {
   url: String!
   size: Int
+}
+
+type Episode {
+  title: String
 }
 
 type Query {
