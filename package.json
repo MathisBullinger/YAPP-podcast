@@ -31,12 +31,14 @@
     "@sentry/node": "^5.5.0",
     "apollo-server-lambda": "^2.6.7",
     "axios": "^0.19.0",
-    "graphql": "^14.4.0"
+    "graphql": "^14.4.0",
+    "sax": "^1.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
     "babel-loader": "^8.0.6",
+    "chalk": "^2.4.2",
     "eslint": "^6.0.1",
     "serverless-offline": "^5.7.2",
     "serverless-webpack": "^5.3.1",
