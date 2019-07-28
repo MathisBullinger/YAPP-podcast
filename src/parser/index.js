@@ -41,6 +41,9 @@ export default (stream, resolve) => {
       id: context => {
         if (context === 'episode') path = path.push(new Node('id'))
       },
+      image: (context, { HREF }) => {
+        if (context === 'episode') podcast.episodes.slice(-1)[0].image = HREF
+      },
     }
 
     const handleText = text => {
@@ -65,6 +68,7 @@ export default (stream, resolve) => {
       TITLE: 'title',
       ENCLOSURE: 'file',
       GUID: 'id',
+      'ITUNES:IMAGE': 'image',
     }
 
     sax.on('opentag', ({ name, attributes }) => {
@@ -89,8 +93,6 @@ export default (stream, resolve) => {
     })
 
     sax.on('end', () => {
-      if (path) path.root().printTree()
-      console.log(podcast)
       resolve(podcast)
     })
 
