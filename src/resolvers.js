@@ -33,7 +33,7 @@ export default {
       return itunesResult.map(res => mapItunesData(res))
     },
 
-    podcast: async (root, { itunesId }, context, info) => {
+    podcast: async (root, { itunesId }) => {
       const {
         data: { results: itunesResult },
       } = await axios.get('https://itunes.apple.com/search', {
@@ -71,7 +71,7 @@ export default {
     episodes: async ({ feed }) =>
       !feed
         ? null
-        : await axios({
+        : (await axios({
           method: 'get',
           url: feed,
           responseType: 'stream',
@@ -80,10 +80,6 @@ export default {
             new Promise((resolve, reject) =>
               parser(response.data, resolve, reject)
             )
-        ),
-  },
-
-  Episode: {
-    title: ({ foo }) => foo,
+        )).episodes,
   },
 }

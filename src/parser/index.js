@@ -14,29 +14,62 @@ export default (stream, resolve) => {
       strictEntities: false,
     })
 
-    function resolveTagName(name) {
-      switch (name) {
-      case 'CHANNEL':
-        return 'podcast'
+    let path = null
+    const context = () => (!path ? null : path.name || 'none')
+    const podcast = {
+      episodes: [],
+    }
+
+    const resolvers = {
+      podcast: context => {
+        path = new Node('podcast')
+      },
+      episode: context => {
+        if (context === 'podcast') {
+          path = path.push(new Node('episode'))
+          podcast.episodes.push({})
+        }
+      },
+      title: context => {
+        if (context === 'podcast' || context === 'episode')
+          path = path.push(new Node('title'))
+      },
+    }
+
+    const handleText = text => {
+      switch (context()) {
+      case 'title':
+        if (path.parent.name === 'podcast') podcast.name = text
+        else if (path.parent.name === 'episode')
+          podcast.episodes.slice(-1)[0].title = text
+        break
       }
     }
 
-    let tree = null
+    const __ = (k, v) => k.reduce((a, c) => ({ ...a, [c]: v }), {})
+    const translation = {
+      CHANNEL: 'podcast',
+      ITEM: 'episode',
+      TITLE: 'title',
+    }
 
-    let counter = 0
     sax.on('opentag', ({ name, attributes }) => {
-      counter++
-      if (counter > 10) return
-      console.log(name)
-      name = resolveTagName(name)
+      name = translation[name]
       if (!name) return
-      if (name === 'podcast') {
-        if (!tree) tree = new Node(name)
-        return
-      }
+      resolvers[name](context())
     })
 
-    sax.on('end', () => resolve(null))
+    sax.on('text', handleText)
+
+    sax.on('closetag', name => {
+      if (context() === translation[name]) path = path ? path.parent : null
+    })
+
+    sax.on('end', () => {
+      if (path) path.root().printTree()
+      console.log(podcast)
+      resolve(podcast)
+    })
 
     return sax
   }

@@ -3,12 +3,12 @@ export default class Node {
     this.name = name
     this.data = data
     this._children = []
-    this._parent = null
+    this.parent = null
   }
 
   setParent(parent) {
     if (!(parent instanceof Node)) throw Error('_parent must be node')
-    this._parent = parent
+    this.parent = parent
   }
 
   push(child) {
@@ -19,8 +19,8 @@ export default class Node {
   }
 
   root() {
-    if (this._parent === null) return this
-    return this._parent.root()
+    if (this.parent === null) return this
+    return this.parent.root()
   }
 
   printTree() {
