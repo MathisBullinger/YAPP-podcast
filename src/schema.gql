@@ -16,6 +16,8 @@ type Artwork {
 
 type Episode {
   title: String
+  file: String
+  id: ID!
 }
 
 type Query {

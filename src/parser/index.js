@@ -1,5 +1,6 @@
 import { createStream } from 'sax'
 import Node from './node'
+import uuidv3 from 'uuid/v3'
 
 export default (stream, resolve) => {
   stream.pipe(parser())
@@ -9,7 +10,7 @@ export default (stream, resolve) => {
       trim: true,
       normalize: true,
       lowercase: false,
-      xmlns: true,
+      xmlns: false,
       position: true,
       strictEntities: false,
     })
@@ -22,7 +23,7 @@ export default (stream, resolve) => {
 
     const resolvers = {
       podcast: context => {
-        path = new Node('podcast')
+        if (context === null) path = new Node('podcast')
       },
       episode: context => {
         if (context === 'podcast') {
@@ -34,6 +35,12 @@ export default (stream, resolve) => {
         if (context === 'podcast' || context === 'episode')
           path = path.push(new Node('title'))
       },
+      file: (context, { URL }) => {
+        if (context === 'episode') podcast.episodes.slice(-1)[0].file = URL
+      },
+      id: context => {
+        if (context === 'episode') path = path.push(new Node('id'))
+      },
     }
 
     const handleText = text => {
@@ -43,25 +50,41 @@ export default (stream, resolve) => {
         else if (path.parent.name === 'episode')
           podcast.episodes.slice(-1)[0].title = text
         break
+
+      case 'id':
+        if (path.parent.name === 'episode')
+          podcast.episodes.slice(-1)[0].id = text
+        break
       }
     }
 
-    const __ = (k, v) => k.reduce((a, c) => ({ ...a, [c]: v }), {})
+    // const __ = (k, v) => k.reduce((a, c) => ({ ...a, [c]: v }), {})
     const translation = {
       CHANNEL: 'podcast',
       ITEM: 'episode',
       TITLE: 'title',
+      ENCLOSURE: 'file',
+      GUID: 'id',
     }
 
     sax.on('opentag', ({ name, attributes }) => {
       name = translation[name]
       if (!name) return
-      resolvers[name](context())
+      resolvers[name](context(), attributes)
     })
 
     sax.on('text', handleText)
 
     sax.on('closetag', name => {
+      if (
+        translation[name] === 'episode' &&
+        context() === 'episode' &&
+        !podcast.episodes.slice(-1)[0].id
+      )
+        podcast.episodes.slice(-1)[0].id = uuidv3(
+          podcast.episodes.slice(-1)[0].file,
+          uuidv3.DNS
+        )
       if (context() === translation[name]) path = path ? path.parent : null
     })
 
