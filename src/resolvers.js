@@ -1,8 +1,11 @@
 import axios from 'axios'
 import parser from './parser'
 import { getFeedUrl, searchItunes, mapItunesResult } from './itunes'
+import { UserInputError } from 'apollo-server-lambda'
 
-async function parseFeed({ feed: url, itunesId }) {
+async function parseFeed(data) {
+  if (!data) throw new UserInputError('unknown podcast')
+  const { feed: url, itunesId } = data
   return {
     ...(await axios({
       method: 'get',
@@ -26,11 +29,13 @@ export default {
           .every(field => fromItunes.includes(field))
       ) {
         // fetch from itunes
+        console.log('fetch from itunes')
         return (await searchItunes({ term: name, limit: first })).map(
           mapItunesResult
         )
       } else {
         // fetch from feeds
+        console.log('fetch from feeds')
         return await Promise.all(
           (await getFeedUrl({ name, limit: first })).map(parseFeed)
         )

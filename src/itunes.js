@@ -24,7 +24,7 @@ export async function getFeedUrl({ name, itunesId, limit }) {
       !results[0].feedUrl
     )
       return null
-    return results[0].feedUrl
+    return { feed: results[0].feedUrl, itunesId }
   } else
     return results
       .map(result => ({ feed: result.feedUrl, itunesId: result.collectionId }))
