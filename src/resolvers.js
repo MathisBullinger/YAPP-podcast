@@ -2,15 +2,18 @@ import axios from 'axios'
 import parser from './parser'
 import { getFeedUrl, searchItunes, mapItunesResult } from './itunes'
 
-async function parseFeed(url) {
-  return await axios({
-    method: 'get',
-    url,
-    responseType: 'stream',
-  }).then(
-    response =>
-      new Promise((resolve, reject) => parser(response.data, resolve, reject))
-  )
+async function parseFeed({ feed: url, itunesId }) {
+  return {
+    ...(await axios({
+      method: 'get',
+      url,
+      responseType: 'stream',
+    }).then(
+      response =>
+        new Promise((resolve, reject) => parser(response.data, resolve, reject))
+    )),
+    itunesId,
+  }
 }
 
 export default {
@@ -34,9 +37,7 @@ export default {
       }
     },
 
-    podcast: async (root, { itunesId }) => ({
-      ...(await parseFeed(await getFeedUrl({ itunesId }))),
-      itunesId,
-    }),
+    podcast: async (root, { itunesId }) =>
+      await parseFeed(await getFeedUrl({ itunesId })),
   },
 }

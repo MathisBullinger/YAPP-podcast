@@ -25,7 +25,10 @@ export async function getFeedUrl({ name, itunesId, limit }) {
     )
       return null
     return results[0].feedUrl
-  } else return results.map(result => result.feedUrl).filter(feed => feed)
+  } else
+    return results
+      .map(result => ({ feed: result.feedUrl, itunesId: result.collectionId }))
+      .filter(feed => feed)
 }
 
 export function mapItunesResult(data) {
