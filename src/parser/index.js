@@ -1,5 +1,6 @@
 import { createStream } from 'sax'
 import Node from './node'
+import uuidv3 from 'uuid/v3'
 
 export default (stream, resolve) => {
   stream.pipe(parser())
@@ -9,7 +10,7 @@ export default (stream, resolve) => {
       trim: true,
       normalize: true,
       lowercase: false,
-      xmlns: true,
+      xmlns: false,
       position: true,
       strictEntities: false,
     })
@@ -18,11 +19,12 @@ export default (stream, resolve) => {
     const context = () => (!path ? null : path.name || 'none')
     const podcast = {
       episodes: [],
+      artworks: [],
     }
 
     const resolvers = {
       podcast: context => {
-        path = new Node('podcast')
+        if (context === null) path = new Node('podcast')
       },
       episode: context => {
         if (context === 'podcast') {
@@ -34,6 +36,23 @@ export default (stream, resolve) => {
         if (context === 'podcast' || context === 'episode')
           path = path.push(new Node('title'))
       },
+      file: (context, { URL }) => {
+        if (context === 'episode') podcast.episodes.slice(-1)[0].file = URL
+      },
+      id: context => {
+        if (context === 'episode') path = path.push(new Node('id'))
+      },
+      image: (context, { HREF }) => {
+        if (context === 'podcast') podcast.artworks.push({ url: HREF })
+        else if (context === 'episode')
+          podcast.episodes.slice(-1)[0].image = HREF
+      },
+      description: context => {
+        if (context === 'podcast') path = path.push(new Node('description'))
+      },
+      creator: context => {
+        if (context === 'podcast') path = path.push(new Node('creator'))
+      },
     }
 
     const handleText = text => {
@@ -43,6 +62,19 @@ export default (stream, resolve) => {
         else if (path.parent.name === 'episode')
           podcast.episodes.slice(-1)[0].title = text
         break
+
+      case 'id':
+        if (path.parent.name === 'episode')
+          podcast.episodes.slice(-1)[0].id = text
+        break
+
+      case 'description':
+        if (path.parent.name === 'podcast') podcast.description = text
+        break
+
+      case 'creator':
+        if (path.parent.name === 'podcast') podcast.creator = text
+        break
       }
     }
 
@@ -51,23 +83,36 @@ export default (stream, resolve) => {
       CHANNEL: 'podcast',
       ITEM: 'episode',
       TITLE: 'title',
+      ENCLOSURE: 'file',
+      GUID: 'id',
+      'ITUNES:IMAGE': 'image',
+      ...__(['DESCRIPTION', 'ITUNES:SUMMARY'], 'description'),
+      'ITUNES:AUTHOR': 'creator',
     }
 
     sax.on('opentag', ({ name, attributes }) => {
       name = translation[name]
       if (!name) return
-      resolvers[name](context())
+      resolvers[name](context(), attributes)
     })
 
     sax.on('text', handleText)
+    sax.on('cdata', handleText)
 
     sax.on('closetag', name => {
+      if (
+        translation[name] === 'episode' &&
+        context() === 'episode' &&
+        !podcast.episodes.slice(-1)[0].id
+      )
+        podcast.episodes.slice(-1)[0].id = uuidv3(
+          podcast.episodes.slice(-1)[0].file,
+          uuidv3.DNS
+        )
       if (context() === translation[name]) path = path ? path.parent : null
     })
 
     sax.on('end', () => {
-      if (path) path.root().printTree()
-      console.log(podcast)
       resolve(podcast)
     })
 

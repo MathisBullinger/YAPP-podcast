@@ -2,11 +2,10 @@ type Podcast {
   itunesId: ID
   name: String
   creator: String
-  artwork: Artwork
-  thumbnail: Artwork
   artworks: [Artwork!]
   feed: String
   episodes: [Episode!]
+  description: String
 }
 
 type Artwork {
@@ -16,6 +15,9 @@ type Artwork {
 
 type Episode {
   title: String
+  file: String
+  id: ID!
+  image: String
 }
 
 type Query {
