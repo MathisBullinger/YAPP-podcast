@@ -19,6 +19,7 @@ export default (stream, resolve) => {
     const context = () => (!path ? null : path.name || 'none')
     const podcast = {
       episodes: [],
+      artworks: [],
     }
 
     const resolvers = {
@@ -42,7 +43,9 @@ export default (stream, resolve) => {
         if (context === 'episode') path = path.push(new Node('id'))
       },
       image: (context, { HREF }) => {
-        if (context === 'episode') podcast.episodes.slice(-1)[0].image = HREF
+        if (context === 'podcast') podcast.artworks.push({ url: HREF })
+        else if (context === 'episode')
+          podcast.episodes.slice(-1)[0].image = HREF
       },
       description: context => {
         if (context === 'podcast') path = path.push(new Node('description'))
