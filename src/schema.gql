@@ -2,11 +2,10 @@ type Podcast {
   itunesId: ID
   name: String
   creator: String
-  artwork: Artwork
-  thumbnail: Artwork
   artworks: [Artwork!]
   feed: String
   episodes: [Episode!]
+  description: String
 }
 
 type Artwork {

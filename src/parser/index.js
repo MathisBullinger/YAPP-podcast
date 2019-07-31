@@ -44,6 +44,9 @@ export default (stream, resolve) => {
       image: (context, { HREF }) => {
         if (context === 'episode') podcast.episodes.slice(-1)[0].image = HREF
       },
+      description: context => {
+        if (context === 'podcast') path = path.push(new Node('description'))
+      },
     }
 
     const handleText = text => {
@@ -58,10 +61,13 @@ export default (stream, resolve) => {
         if (path.parent.name === 'episode')
           podcast.episodes.slice(-1)[0].id = text
         break
+
+      case 'description':
+        if (path.parent.name === 'podcast') podcast.description = text
       }
     }
 
-    // const __ = (k, v) => k.reduce((a, c) => ({ ...a, [c]: v }), {})
+    const __ = (k, v) => k.reduce((a, c) => ({ ...a, [c]: v }), {})
     const translation = {
       CHANNEL: 'podcast',
       ITEM: 'episode',
@@ -69,6 +75,7 @@ export default (stream, resolve) => {
       ENCLOSURE: 'file',
       GUID: 'id',
       'ITUNES:IMAGE': 'image',
+      ...__(['DESCRIPTION', 'ITUNES:SUMMARY'], 'description'),
     }
 
     sax.on('opentag', ({ name, attributes }) => {
@@ -78,6 +85,7 @@ export default (stream, resolve) => {
     })
 
     sax.on('text', handleText)
+    sax.on('cdata', handleText)
 
     sax.on('closetag', name => {
       if (

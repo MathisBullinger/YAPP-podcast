@@ -12,10 +12,10 @@ export async function searchItunes({ term, limit }) {
   })).data.results
 }
 
-export async function getFeedUrl({ name, itunesId }) {
+export async function getFeedUrl({ name, itunesId, limit }) {
   const results = await searchItunes({
     term: itunesId || name,
-    ...(itunesId && { limit: 1 }),
+    ...((itunesId || limit) && { limit: itunesId ? 1 : limit }),
   })
 
   if (itunesId) {
