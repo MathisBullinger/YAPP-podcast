@@ -50,6 +50,9 @@ export default (stream, resolve) => {
       description: context => {
         if (context === 'podcast') path = path.push(new Node('description'))
       },
+      creator: context => {
+        if (context === 'podcast') path = path.push(new Node('creator'))
+      },
     }
 
     const handleText = text => {
@@ -67,6 +70,11 @@ export default (stream, resolve) => {
 
       case 'description':
         if (path.parent.name === 'podcast') podcast.description = text
+        break
+
+      case 'creator':
+        if (path.parent.name === 'podcast') podcast.creator = text
+        break
       }
     }
 
@@ -79,6 +87,7 @@ export default (stream, resolve) => {
       GUID: 'id',
       'ITUNES:IMAGE': 'image',
       ...__(['DESCRIPTION', 'ITUNES:SUMMARY'], 'description'),
+      'ITUNES:AUTHOR': 'creator',
     }
 
     sax.on('opentag', ({ name, attributes }) => {

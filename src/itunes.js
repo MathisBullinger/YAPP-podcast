@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 export async function searchItunes({ term, limit }) {
-  console.log('\n\nsearch itunes\n\n')
   if (!term) return []
   return (await axios.get('https://itunes.apple.com/search', {
     params: {
