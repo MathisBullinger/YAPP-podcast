@@ -34,7 +34,9 @@ export default {
       }
     },
 
-    podcast: async (root, { itunesId }) =>
-      await parseFeed(await getFeedUrl({ itunesId })),
+    podcast: async (root, { itunesId }) => ({
+      ...(await parseFeed(await getFeedUrl({ itunesId }))),
+      itunesId,
+    }),
   },
 }
