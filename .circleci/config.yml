@@ -22,20 +22,16 @@ jobs:
           command: sudo npm install --global serverless
 
       - run:
-          name: Install Apollo CLI
-          command: sudo npm install --global apollo
-
-      - run:
           name: Install Dependencies
           command: npm install
 
-      - run:
-          name: Deploy application
-          command: sls deploy
-
       - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            sudo npm install --global apollo
             apollo service:push
+            sls deploy --stage prod
+          elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
+            sls deploy --stage dev
           fi
 
       - save_cache:
@@ -50,4 +46,6 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - develop
