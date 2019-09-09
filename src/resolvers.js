@@ -22,7 +22,7 @@ async function parseFeed(data) {
 export default {
   Query: {
     search: async (root, { name, first }, context, info) => {
-      const fromItunes = ['itunesId', 'name', 'creator', 'artworks', 'feed']
+      const fromItunes = ['itunesId', 'name', 'creator', 'artworks', 'feed', '__typename']
       if (
         info.fieldNodes[0].selectionSet.selections
           .map(select => select.name.value)
