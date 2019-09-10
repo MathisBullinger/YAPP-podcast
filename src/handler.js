@@ -15,12 +15,15 @@ export const podcast = async (event, context) => {
       Sentry.captureException(error)
       return error
     },
-    playground: {
-      endpoint: `/${process.env.stage}`,
-      settings: {
-        'schema.polling.enable': false,
-      },
-    },
+    playground:
+      process.env.stage === 'prod'
+        ? false
+        : {
+          endpoint: `/${process.env.stage}`,
+          settings: {
+            'schema.polling.enable': false,
+          },
+        },
   })
   const handler = server.createHandler({
     ...(process.env.stage === 'dev' && {
