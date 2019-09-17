@@ -4,6 +4,7 @@ import parse from './parser'
 
 export interface Podcast {
   name: string
+  link: string
 }
 
 export async function getPodcast(id: string): Promise<Podcast> {
