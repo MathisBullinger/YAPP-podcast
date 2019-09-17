@@ -28,12 +28,12 @@ async function parse(stream): Promise<Podcast> {
 
     sax.on('end', () => {
       formatPodcast(podcast)
-      resolve(podcast as Podcast)
+      resolve((podcast as unknown) as Podcast)
     })
     sax.on('error', reject)
 
     let parseChain: Node = new Node('ROOT')
-    const podcast = {}
+    const podcast = { episodes: [] }
 
     sax.on('opentag', ({ name, attributes }) => {
       parseChain = parseChain.push(name)
