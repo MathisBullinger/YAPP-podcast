@@ -1,3 +1,21 @@
+export const tags = {
+  title: 'TITLE',
+  link: 'LINK',
+  lang: 'LANGUAGE',
+  description: 'DESCRIPTION',
+  item: 'ITEM',
+  pubdate: 'PUBDATE',
+  enclosure: 'ENCLOSURE',
+  itunes: {
+    author: 'ITUNES:AUTHOR',
+    summary: 'ITUNES:SUMMARY',
+    subtitle: 'ITUNES:SUBTITLE',
+  },
+  media: {
+    content: 'MEDIA:CONTENT',
+  },
+}
+
 type NodeType = 'node' | 'text'
 
 type RuleHandler = (
