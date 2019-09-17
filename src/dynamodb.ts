@@ -1,6 +1,6 @@
 import Dynamite from 'dynamite'
 
-const client = new Dynamite.Client({
+export default new Dynamite.Client({
   region: 'us-east-1',
   ...(process.env.IS_OFFLINE
     ? { endpoint: 'http://localhost:8000' }
@@ -9,5 +9,3 @@ const client = new Dynamite.Client({
       secretAccessKey: process.env.PODSERV_AWS_KEY_SECRET,
     }),
 })
-
-export default client

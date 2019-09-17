@@ -22,11 +22,8 @@ export const podcast = async (event, context) => {
       process.env.stage === 'prod'
         ? false
         : {
-          endpoint: `/${process.env.stage}`,
-          settings: {
-            'schema.polling.enable': false,
+            endpoint: `/${process.env.stage}`,
           },
-        },
   })
   const handler = server.createHandler({
     ...(process.env.stage === 'dev' && {
