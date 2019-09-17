@@ -21,6 +21,8 @@ functions:
           cors: true
     environment:
       stage: ${self:provider.stage}
+      PODSERV_AWS_KEY_ID: ${ssm:PODSERV_AWS_KEY_ID}
+      PODSERV_AWS_KEY_SECRET: ${ssm:PODSERV_AWS_KEY_SECRET}
 
 plugins:
   - serverless-webpack

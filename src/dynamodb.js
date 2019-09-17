@@ -1,22 +1,13 @@
-import AWS from 'aws-sdk'
+import Dynamite from 'dynamite'
 
-AWS.config.update({
+const client = new Dynamite.Client({
   region: 'us-east-1',
-  endpoint: 'http://localhost:8000',
+  ...(process.env.IS_OFFLINE
+    ? { endpoint: 'http://localhost:8000' }
+    : {
+      accessKeyId: process.env.PODSERV_AWS_KEY_ID,
+      secretAccessKey: process.env.PODSERV_AWS_KEY_SECRET,
+    }),
 })
 
-const docClient = new AWS.DynamoDB.DocumentClient()
-
-docClient.get(
-  {
-    TableName: 'podcasts',
-    Key: {
-      podId: 'foo',
-      SK: '*',
-    },
-  },
-  (err, data) => {
-    if (err) console.error(err)
-    console.info(data)
-  }
-)
+export default client
