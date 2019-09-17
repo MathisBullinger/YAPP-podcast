@@ -6,7 +6,6 @@ import rules from './rules'
 
 export default async (feed: string): Promise<Podcast> =>
   new Promise((resolve, reject) => {
-    console.log(feed)
     axios({ method: 'get', url: feed, responseType: 'stream' })
       .then(({ data }) => {
         parse(data)
@@ -27,7 +26,10 @@ async function parse(stream): Promise<Podcast> {
       strictEntities: false,
     })
 
-    sax.on('end', () => resolve(podcast as Podcast))
+    sax.on('end', () => {
+      formatPodcast(podcast)
+      resolve(podcast as Podcast)
+    })
     sax.on('error', reject)
 
     let parseChain: Node = new Node('ROOT')
@@ -57,4 +59,11 @@ async function parse(stream): Promise<Podcast> {
 
     stream.pipe(sax)
   })
+}
+
+function formatPodcast(podcast: { [key: string]: any }) {
+  if (typeof podcast !== 'object') return
+  Object.entries(podcast)
+    .filter(([, v]) => typeof v === 'object')
+    .forEach(([k, v]) => ('_h' in v ? (podcast[k] = v.v) : formatPodcast(v)))
 }
