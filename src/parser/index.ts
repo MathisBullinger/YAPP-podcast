@@ -57,6 +57,20 @@ async function parse(stream): Promise<Podcast> {
       parseChain = parseChain.pop()
     })
 
+    let cdata = ''
+    sax.on('cdata', data => (cdata += data))
+    sax.on('closecdata', () => {
+      rules.find(rule =>
+        rule(
+          'data',
+          { cdata, in: parseChain.name },
+          parseChain.parent.name,
+          podcast
+        )
+      )
+      cdata = ''
+    })
+
     stream.pipe(sax)
   })
 }
@@ -65,5 +79,9 @@ function formatPodcast(podcast: { [key: string]: any }) {
   if (typeof podcast !== 'object') return
   Object.entries(podcast)
     .filter(([, v]) => typeof v === 'object')
-    .forEach(([k, v]) => ('_h' in v ? (podcast[k] = v.v) : formatPodcast(v)))
+    .forEach(([k, v]) =>
+      '_h' in v
+        ? (podcast[k] = 't' in v ? { value: v.v, type: v.t } : v.v)
+        : formatPodcast(v)
+    )
 }

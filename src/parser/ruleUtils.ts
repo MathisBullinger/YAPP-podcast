@@ -1,4 +1,7 @@
 export const tags = {
+  podcast: 'CHANNEL',
+  episode: 'ITEM',
+
   title: 'TITLE',
   link: 'LINK',
   lang: 'LANGUAGE',
@@ -16,15 +19,16 @@ export const tags = {
   },
 }
 
-type NodeType = 'node' | 'text'
+type NodeType = 'node' | 'text' | 'data'
 
 type RuleHandler = (
   node: { [key: string]: any },
-  pod: { [key: string]: any }
+  pod: { [key: string]: any },
+  type: NodeType
 ) => boolean
 
 export type Rule = {
-  type: NodeType
+  type: NodeType | NodeType[]
   context: string
   handler: RuleHandler
 }
@@ -35,15 +39,15 @@ export const textRule = (
   target: string | [string, (pod) => {}],
   hierarchy: number = 1
 ): Rule => ({
-  type: 'text',
+  type: ['text', 'data'],
   context,
-  handler: (node, pod) => {
+  handler: (node, pod, type) => {
     if (node.in !== parentName) return false
     const [b, t] = !Array.isArray(target)
       ? [pod, target]
       : [target[1](pod), target[0]]
     if (!(target in pod) || hierarchy < b[t]._h)
-      b[t] = { v: node.text, _h: hierarchy }
+      b[t] = { v: node.text, _h: hierarchy, t: type }
     return true
   },
 })
@@ -96,7 +100,13 @@ export const build = (rules: { [key: string]: Rule }) =>
         context: string,
         pod: object
       ): boolean {
-        if (type !== rule.type || context !== rule.context) return false
-        return rule.handler(node, pod)
+        if (
+          !(Array.isArray(rule.type) ? rule.type : [rule.type]).includes(
+            type
+          ) ||
+          context !== rule.context
+        )
+          return false
+        return rule.handler(node, pod, type)
       }
   )
