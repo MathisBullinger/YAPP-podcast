@@ -90,6 +90,7 @@ interface EpisodeData {
   duration?: Text
   date?: Text
   description?: Text
+  link?: Text
 }
 
 export interface Text {

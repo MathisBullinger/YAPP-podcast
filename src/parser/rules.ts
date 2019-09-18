@@ -23,5 +23,6 @@ export default build({
   'ep.enclosure':     nodeRule(n.episode, n.enclosure,        et('file'), ({ URL }) => URL, 1),
   'ep.m:con':         nodeRule(n.episode, n.media.content,    et('file'), ({ URL }) => URL, 2),
   'ep.it.duration':   textRule(n.episode, n.itunes.duration,  et('duration')),
-  'ep.description':   textRule(n.episode, n.description,      et('description'))
+  'ep.description':   textRule(n.episode, n.description,      et('description')),
+  'ep.link':          textRule(n.episode, n.link,             et('link'))
 })
