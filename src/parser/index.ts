@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { createStream } from 'sax'
-import { Podcast } from '../library'
 import Node from './node'
 import rules from './rules'
+import format, { Podcast } from './format'
 
 export default async (feed: string): Promise<Podcast> =>
   new Promise((resolve, reject) => {
@@ -27,8 +27,7 @@ async function parse(stream): Promise<Podcast> {
     })
 
     sax.on('end', () => {
-      formatPodcast(podcast)
-      resolve((podcast as unknown) as Podcast)
+      resolve(format(podcast as PodcastData))
     })
     sax.on('error', reject)
 
@@ -75,13 +74,25 @@ async function parse(stream): Promise<Podcast> {
   })
 }
 
-function formatPodcast(podcast: { [key: string]: any }) {
-  if (typeof podcast !== 'object') return
-  Object.entries(podcast)
-    .filter(([, v]) => typeof v === 'object')
-    .forEach(([k, v]) =>
-      '_h' in v
-        ? (podcast[k] = 't' in v ? { value: v.v, type: v.t } : v.v)
-        : formatPodcast(v)
-    )
+export interface PodcastData {
+  name?: Text
+  creator?: Text
+  description?: Text
+  subtitle?: Text
+  link?: Text
+  lang?: Text
+  episodes: EpisodeData[]
+}
+
+interface EpisodeData {
+  title?: Text
+  file?: Text
+  duration?: Text
+  date?: Text
+  description?: Text
+}
+
+export interface Text {
+  v: string
+  t: 'text' | 'data'
 }

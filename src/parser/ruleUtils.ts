@@ -13,6 +13,7 @@ export const tags = {
     author: 'ITUNES:AUTHOR',
     summary: 'ITUNES:SUMMARY',
     subtitle: 'ITUNES:SUBTITLE',
+    duration: 'ITUNES:DURATION',
   },
   media: {
     content: 'MEDIA:CONTENT',
@@ -47,7 +48,11 @@ export const textRule = (
       ? [pod, target]
       : [target[1](pod), target[0]]
     if (!(target in pod) || hierarchy < b[t]._h)
-      b[t] = { v: node.text, _h: hierarchy, t: type }
+      b[t] = {
+        v: type === 'text' ? node.text : node.cdata,
+        _h: hierarchy,
+        t: type,
+      }
     return true
   },
 })
