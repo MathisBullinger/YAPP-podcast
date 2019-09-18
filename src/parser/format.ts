@@ -32,10 +32,12 @@ export default function(pod: PodcastData): Podcast {
     return 0
   }
 
-  const filterNull = (obj: object) =>
-    Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== null))
+  const filter = (obj: object) =>
+    Object.fromEntries(
+      Object.entries(obj).filter(([, v]) => v !== null && v !== '')
+    )
 
-  return filterNull({
+  return filter({
     creator: text(pod.creator),
     name: text(pod.name),
     link: text(pod.link),
@@ -43,7 +45,7 @@ export default function(pod: PodcastData): Podcast {
     description: data(pod.description),
     subtitle: data(pod.subtitle),
     episodes: pod.episodes.map(e =>
-      filterNull({
+      filter({
         title: text(e.title),
         description: data(e.description),
         date: date(e.date),

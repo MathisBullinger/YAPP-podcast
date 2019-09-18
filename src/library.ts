@@ -7,12 +7,15 @@ import uuidv5 from 'uuid/v5'
 export async function getPodcast(id: string): Promise<Podcast> {
   console.log('get podcast', id)
   const { result } = await dbClient
-    .getItem('podcasts')
+    .newQueryBuilder('podcasts')
     .setHashKey('podId', id)
-    .setRangeKey('SK', 'meta')
     .execute()
-  console.log('result:', result)
-  if (!result) return
+  if (!Array.isArray(result) || result.length === 0) return
+  const metaIndex = result.findIndex(r => r.SK === 'meta')
+  return {
+    ...result.splice(metaIndex, 1)[0],
+    episodes: result,
+  }
 }
 
 export async function addPodcast(id: string): Promise<Podcast> {
@@ -38,6 +41,7 @@ export async function addPodcast(id: string): Promise<Podcast> {
         })),
       ].map(item => dbClient.putItem('podcasts', item).execute())
     )
+    return podcast
   } catch (err) {
     console.warn(err)
     throw err

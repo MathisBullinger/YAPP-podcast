@@ -5,13 +5,10 @@ export default {
     search: () => [],
 
     podcast: async (root, { itunesId }) => {
-      const podcast =
+      return (
         (await library.getPodcast(itunesId)) ||
         (await library.addPodcast(itunesId))
-
-      console.log('podcast:', podcast)
-
-      return {}
+      )
     },
   },
 }
