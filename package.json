@@ -2,7 +2,6 @@
   "name": "yapp-podcast",
   "version": "1.0.0",
   "description": "YAPP Podcast Service",
-  "main": "src/handler.js",
   "scripts": {
     "start:offline": "sls offline",
     "logs": "sls logs -f podcast",
@@ -44,19 +43,23 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.6",
     "babel-preset-env": "^1.7.0",
+    "cache-loader": "^4.1.0",
     "chalk": "^2.4.2",
-    "serverless-offline": "^5.7.2",
-    "serverless-webpack": "^5.3.1",
-    "webpack": "^4.35.0",
-    "ts-loader": "^6.0.4",
+    "clean-webpack-plugin": "^3.0.0",
     "eslint": "*",
     "eslint-config-prettier": "*",
     "eslint-plugin-prettier": "^3.1.0",
-    "@typescript-eslint/eslint-plugin": "^1.13.0",
-    "@typescript-eslint/parser": "^1.13.0",
-    "typescript": "^3.5.3"
+    "fork-ts-checker-webpack-plugin": "^1.5.0",
+    "serverless-offline": "^5.7.2",
+    "serverless-webpack": "^5.3.1",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.6.3",
+    "webpack": "^4.35.0",
+    "webpack-node-externals": "^1.7.2"
   }
 }
