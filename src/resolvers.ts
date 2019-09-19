@@ -1,8 +1,9 @@
 import * as library from './library'
+import { search } from './itunes'
 
 export default {
   Query: {
-    search: () => [],
+    search: async (root, { name, first }) => await search(name, first),
 
     podcast: async (root, { itunesId }) => {
       return (
