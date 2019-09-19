@@ -11,13 +11,32 @@ module.exports = {
   performance: {
     hints: false,
   },
+  resolve: {
+    mainFields: ['main', 'module'],
+    extensions: ['.ts', '.js'],
+  },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: __dirname,
+        test: /\.ts(x?)$/,
         exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+          },
+          {
+            loader: 'ts-loader',
+          },
+        ],
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+          },
+        ],
       },
       {
         test: /\.(graphql|gql)$/,

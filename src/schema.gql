@@ -18,6 +18,8 @@ type Episode {
   file: String
   id: ID!
   image: String
+  description: String
+  subtitle: String
 }
 
 type Query {
