@@ -2,7 +2,7 @@ import axios from 'axios'
 import { createStream } from 'sax'
 import Node from './node'
 import rules from './rules'
-import format, { Podcast } from './format'
+import format from './format'
 
 export default async (feed: string): Promise<Podcast> =>
   new Promise((resolve, reject) => {

@@ -56,25 +56,3 @@ export default function(pod: PodcastData): Podcast {
     ),
   }) as Podcast
 }
-
-export interface Podcast extends Meta {
-  episodes: Episode[]
-}
-
-export interface Meta {
-  creator?: string
-  name?: string
-  link?: string
-  language?: string
-  description?: string
-  subtitle?: string
-}
-
-export interface Episode {
-  title?: string
-  description?: string
-  date?: number
-  file?: string
-  duration?: number
-  link?: string
-}

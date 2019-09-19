@@ -1,7 +1,6 @@
 import dbClient from './dynamodb'
 import * as itunes from './itunes'
 import parse from './parser'
-import { Podcast as PodForm, Meta } from './parser/format'
 import uuidv5 from 'uuid/v5'
 
 export async function getPodcast(id: string): Promise<Podcast> {
@@ -46,15 +45,6 @@ export async function addPodcast(id: string): Promise<Podcast> {
     console.warn(err)
     throw err
   }
-}
-
-interface Podcast extends PodForm {
-  feed: string
-}
-
-interface Key {
-  podId: string
-  SK: string
 }
 
 function getMeta(podcast: Podcast): Meta {

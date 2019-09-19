@@ -5,10 +5,11 @@ export const tags = {
   title: 'TITLE',
   link: 'LINK',
   lang: 'LANGUAGE',
-  description: 'DESCRIPTION',
   item: 'ITEM',
   pubdate: 'PUBDATE',
   enclosure: 'ENCLOSURE',
+  description: 'DESCRIPTION',
+  content: 'CONTENT:ENCODED',
   itunes: {
     author: 'ITUNES:AUTHOR',
     summary: 'ITUNES:SUMMARY',
