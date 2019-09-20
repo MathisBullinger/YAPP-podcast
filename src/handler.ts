@@ -18,6 +18,7 @@ export const podcast = async (event, context) => {
         return error
       },
     }),
+    introspection: process.env.stage === 'dev',
     playground:
       process.env.stage === 'prod'
         ? false
