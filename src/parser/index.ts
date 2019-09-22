@@ -81,6 +81,7 @@ export interface PodcastData {
   subtitle?: Text
   link?: Text
   lang?: Text
+  img?: Text
   episodes: EpisodeData[]
 }
 
@@ -91,6 +92,7 @@ interface EpisodeData {
   date?: Text
   description?: Text
   link?: Text
+  img?: Text
 }
 
 export interface Text {

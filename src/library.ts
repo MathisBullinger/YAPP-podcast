@@ -4,7 +4,6 @@ import parse from './parser'
 import uuidv5 from 'uuid/v5'
 
 export async function getPodcast(id: string): Promise<Podcast> {
-  console.log('get podcast', id)
   const { result } = await dbClient
     .newQueryBuilder('podcasts')
     .setHashKey('podId', id)
@@ -18,7 +17,6 @@ export async function getPodcast(id: string): Promise<Podcast> {
 }
 
 export async function addPodcast(id: string): Promise<Podcast> {
-  console.log('add podcast', id)
   const feed = await itunes.getFeedUrl(id)
   if (!feed) return
   try {

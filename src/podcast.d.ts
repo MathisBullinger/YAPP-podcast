@@ -10,6 +10,7 @@ interface Meta {
   description?: string
   subtitle?: string
   feed?: string
+  img?: string
 }
 
 interface Episode {
@@ -19,4 +20,5 @@ interface Episode {
   file?: string
   duration?: number
   link?: string
+  img?: string
 }

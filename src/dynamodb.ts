@@ -5,7 +5,7 @@ export default new Dynamite.Client({
   ...(process.env.IS_OFFLINE
     ? { endpoint: 'http://localhost:8000' }
     : {
-      accessKeyId: process.env.PODSERV_AWS_KEY_ID,
-      secretAccessKey: process.env.PODSERV_AWS_KEY_SECRET,
-    }),
+        accessKeyId: process.env.PODSERV_AWS_KEY_ID,
+        secretAccessKey: process.env.PODSERV_AWS_KEY_SECRET,
+      }),
 })

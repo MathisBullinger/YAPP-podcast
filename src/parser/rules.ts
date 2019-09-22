@@ -16,7 +16,8 @@ export default build({
   'pod.description':  textRule(n.podcast, n.description,      'description', 1),
   'pod.it:summary':   textRule(n.podcast, n.itunes.summary,   'description', 2),
   'pod.it:subtitle':  textRule(n.podcast, n.itunes.subtitle,  'subtitle'),
-
+  'pod.it:image':     nodeRule(n.podcast, n.itunes.image,     'img', ({HREF}) => HREF),
+  
   'pod.item':         custRule(n.podcast, n.item,             pod => pod.episodes.push({})),
   'ep.title':         textRule(n.episode, n.title,            et('title')),
   'ep.date':          textRule(n.episode, n.pubdate,          et('date')),
@@ -26,4 +27,5 @@ export default build({
   'ep.link':          textRule(n.episode, n.link,             et('link')),
   'ep.summary':       textRule(n.episode, n.description,      et('summary')),
   'ep.description':   textRule(n.episode, n.content,          et('description')),
+  'ep.it:image':      nodeRule(n.podcast, n.itunes.image,     et('img'), ({HREF}) => HREF),
 })

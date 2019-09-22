@@ -44,6 +44,7 @@ export default function(pod: PodcastData): Podcast {
     language: text(pod.lang),
     description: data(pod.description),
     subtitle: data(pod.subtitle),
+    img: text(pod.img),
     episodes: pod.episodes.map(e =>
       filter({
         title: text(e.title),
@@ -52,6 +53,7 @@ export default function(pod: PodcastData): Podcast {
         file: text(e.file),
         duration: duration(e.duration),
         link: text(e.link),
+        img: text(e.img),
       })
     ),
   }) as Podcast

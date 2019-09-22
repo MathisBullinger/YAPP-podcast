@@ -15,6 +15,7 @@ export const tags = {
     summary: 'ITUNES:SUMMARY',
     subtitle: 'ITUNES:SUBTITLE',
     duration: 'ITUNES:DURATION',
+    image: 'ITUNES:IMAGE',
   },
   media: {
     content: 'MEDIA:CONTENT',

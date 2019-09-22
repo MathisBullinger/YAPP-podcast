@@ -8,12 +8,12 @@
     "logs:watch": "sls logs -f podcast -t",
     "deploy": "sls deploy",
     "deploy:function": "sls deploy function -f podcast",
-    "format:check": "prettier --check \"./*.js\" \"./**/*.js\"",
-    "format:write": "prettier --write \"./*.js\" \"./**/*.js\"",
-    "lint:check": "eslint . --ext .js",
-    "lint:write": "eslint . --ext .js --fix",
-    "format-lint:check": "npm run lint:check && npm run format:check",
-    "format-lint:write": "npm run lint:write && npm run format:write"
+    "prettier:check": "prettier --check \"./*.{js,ts,html}\" \"./**/*.{js,ts,html}\"",
+    "prettier:write": "prettier --write \"./*.{js,ts,html}\" \"./**/*.{js,ts,html}\"",
+    "eslint:check": "eslint . --ext .js,.ts,",
+    "eslint:write": "eslint . --ext .js,.ts, --fix",
+    "lint": "npm run eslint:check && npm run prettier:check",
+    "format": "npm run eslint:write && npm run prettier:write"
   },
   "repository": {
     "type": "git",
