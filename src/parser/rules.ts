@@ -27,5 +27,5 @@ export default build({
   'ep.link':          textRule(n.episode, n.link,             et('link')),
   'ep.summary':       textRule(n.episode, n.description,      et('summary')),
   'ep.description':   textRule(n.episode, n.content,          et('description')),
-  'ep.it:image':      nodeRule(n.podcast, n.itunes.image,     et('img'), ({HREF}) => HREF),
+  'ep.it:image':      nodeRule(n.episode, n.itunes.image,     et('img'), ({HREF}) => HREF, 1),
 })
