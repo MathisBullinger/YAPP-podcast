@@ -19,7 +19,7 @@ jobs:
 
       - run:
           name: Install Serverless CLI
-          command: sudo npm install --global serverless
+          command: sudo npm i -g serverless@1.51.0
 
       - run:
           name: Install Dependencies

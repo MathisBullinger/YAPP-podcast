@@ -11,13 +11,16 @@ type Podcast {
 type Artwork {
   url: String!
   size: Int
+  type: String
 }
 
 type Episode {
   title: String
   file: String
   id: ID!
-  image: String
+  description: String
+  subtitle: String
+  artworks: [Artwork!]
 }
 
 type Query {

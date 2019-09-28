@@ -1,21 +1,30 @@
-module.exports = {
+const path = require('path')
+
+const config = {
+  extends: ['eslint:recommended', 'prettier/react'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['prettier', '@typescript-eslint'],
   env: {
     node: true,
     es6: true,
   },
-  extends: 'eslint:recommended',
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-  },
   parserOptions: {
+    parser: 'babel-eslint',
+    project: path.resolve(__dirname, './tsconfig.json'),
+    tsconfigRootDir: __dirname,
     ecmaVersion: 2018,
     sourceType: 'module',
   },
+  globals: {
+    module: true,
+    process: true,
+    require: true,
+    __dirname: 'readonly',
+  },
   rules: {
-    indent: ['error', 2],
-    'linebreak-style': ['error', 'unix'],
-    quotes: ['error', 'single'],
     semi: ['error', 'never'],
+    '@typescript-eslint/no-unused-vars': 'error',
   },
 }
+
+module.exports = config
