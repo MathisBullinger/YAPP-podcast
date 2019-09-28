@@ -15,9 +15,9 @@ export default function(pod: PodcastData): Podcast {
     return '\u200c' + sanitize(v.v)
   }
 
-  const date = (v: Text): number => {
+  const date = (v: Text): string => {
     if (invalid(v)) return null
-    return Date.parse(v.v)
+    return Date.parse(v.v).toString()
   }
 
   const duration = (v: Text): number => {
