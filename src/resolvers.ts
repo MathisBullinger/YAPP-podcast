@@ -24,6 +24,7 @@ export default {
   },
 
   Podcast: {
+    itunesId: (obj: any) => obj.podId,
     artworks: parseArt,
   },
 
