@@ -26,9 +26,11 @@ jobs:
           command: npm install
 
       - run: |
+          sudo npm install --global apollo
+          apollo service:push
+
+      - run: |
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
-            sudo npm install --global apollo
-            apollo service:push
             sls deploy --stage prod
           elif [ "${CIRCLE_BRANCH}" == "develop" ]; then
             sls deploy --stage dev
