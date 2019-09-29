@@ -30,5 +30,6 @@ export default {
 
   Episode: {
     artworks: parseArt,
+    id: (obj: any) => obj.SK,
   },
 }
