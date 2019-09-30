@@ -21,6 +21,8 @@ type Episode {
   description: String
   subtitle: String
   artworks: [Artwork!]
+  date: String
+  duration: Int
 }
 
 type Query {

@@ -18,10 +18,20 @@ export async function search(
   })
 
   const translation = {
-    collectionId: 'itunesId',
+    collectionId: 'podId',
     artistName: 'creator',
     collectionName: 'name',
     feedUrl: 'feed',
   }
-  return data.results.map(result => translateKeys(result, translation))
+  return data.results.map(result => ({
+    ...translateKeys(result, translation),
+    ...{
+      artworks: Object.entries(result)
+        .filter(([k]) => k.startsWith('artwork'))
+        .map(([k, v]) => ({
+          url: v,
+          size: parseInt(k.split('Url').pop(), 10),
+        })),
+    },
+  }))
 }

@@ -3,19 +3,23 @@ import { createStream } from 'sax'
 import Node from './node'
 import rules from './rules'
 import format from './format'
+import querystring from 'querystring'
 
-export default async (feed: string): Promise<Podcast> =>
-  new Promise((resolve, reject) => {
+export default async function parseUrl(feed: string): Promise<Podcast> {
+  return new Promise((resolve, reject) => {
     axios({ method: 'get', url: feed, responseType: 'stream' })
       .then(({ data }) => {
-        parse(data)
+        parse(data, feed)
           .then(resolve)
           .catch(reject)
       })
       .catch(reject)
   })
+}
 
-async function parse(stream): Promise<Podcast> {
+async function parse(stream, url: string): Promise<Podcast> {
+  let isPaginated = false
+
   return new Promise((resolve, reject) => {
     const sax = createStream(false, {
       trim: true,
@@ -27,7 +31,25 @@ async function parse(stream): Promise<Podcast> {
     })
 
     sax.on('end', () => {
-      resolve(format(podcast as PodcastData))
+      if (isPaginated && podcast.episodes.length) {
+        const currentPage =
+          parseInt(querystring.parse(url).page as string, 10) || 1
+        url = url.replace(/&page=\d+/, '') + `&page=${currentPage + 1}`
+
+        parseUrl(url.replace(/&page=\d+/, '') + `&page=${currentPage + 1}`)
+          .then(result => {
+            if (!result || !result.episodes || !result.episodes.length)
+              resolve((currentPage === 1 ? format : d => d)(podcast))
+
+            resolve(
+              (currentPage === 1 ? format : d => d)({
+                ...podcast,
+                ...{ episodes: [...podcast.episodes, ...result.episodes] },
+              })
+            )
+          })
+          .catch(() => resolve(format(podcast)))
+      } else resolve(format(podcast))
     })
     sax.on('error', reject)
 
@@ -42,6 +64,9 @@ async function parse(stream): Promise<Podcast> {
     })
 
     sax.on('text', (text: string) => {
+      if (parseChain.name === 'GENERATOR' && text.includes('squarespace'))
+        isPaginated = true
+
       rules.find(rule =>
         rule(
           'text',

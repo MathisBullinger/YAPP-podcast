@@ -24,10 +24,12 @@ export default {
   },
 
   Podcast: {
-    artworks: parseArt,
+    itunesId: (obj: any) => obj.podId,
+    artworks: (obj: any) => obj.artworks || parseArt(obj),
   },
 
   Episode: {
     artworks: parseArt,
+    id: (obj: any) => obj.SK,
   },
 }
