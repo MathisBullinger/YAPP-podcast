@@ -25,7 +25,6 @@ export default build({
   'ep.m:con':         nodeRule(n.episode, n.media.content,    et('file'), ({ URL }) => URL, 2),
   'ep.it.duration':   textRule(n.episode, n.itunes.duration,  et('duration')),
   'ep.link':          textRule(n.episode, n.link,             et('link')),
-  'ep.summary':       textRule(n.episode, n.description,      et('summary')),
-  'ep.description':   textRule(n.episode, n.content,          et('description')),
+  'ep.description':   textRule(n.episode, n.description,      et('description')),
   'ep.it:image':      nodeRule(n.episode, n.itunes.image,     et('img'), ({HREF}) => HREF, 1),
 })

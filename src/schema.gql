@@ -19,7 +19,6 @@ type Episode {
   file: String
   id: ID!
   description: String
-  subtitle: String
   artworks: [Artwork!]
   date: String
   duration: Int
