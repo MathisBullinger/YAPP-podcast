@@ -38,6 +38,7 @@ export async function addPodcast(id: string): Promise<Podcast> {
         })),
       ].map(item => dbClient.putItem('podcasts', item).execute())
     )
+    podcast['podId'] = id
     podcast.episodes = podcast.episodes.map(e => ({
       ...e,
       SK: `ep_${e.date || 0}_${uuidv5(e.file || '', uuidv5.URL)}`,
