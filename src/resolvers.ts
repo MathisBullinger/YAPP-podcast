@@ -11,6 +11,11 @@ const parseArt = (obj: any) =>
       type: k.pop(),
     }))
 
+const parseColors = (obj: any) =>
+  Object.entries(obj)
+    .filter(([k]) => k.startsWith('cl'))
+    .map(([k, v]) => ({ name: k.substring(2), value: v }))
+
 export default {
   Query: {
     search: async (root, { name, first }) => await search(name, first),
@@ -26,6 +31,7 @@ export default {
   Podcast: {
     itunesId: (obj: any) => obj.podId,
     artworks: (obj: any) => obj.artworks || parseArt(obj),
+    colors: parseColors,
   },
 
   Episode: {

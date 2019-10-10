@@ -6,12 +6,7 @@ type Podcast {
   feed: String
   episodes: [Episode!]
   description: String
-}
-
-type Artwork {
-  url: String!
-  size: Int
-  type: String
+  colors: [Color]
 }
 
 type Episode {
@@ -23,6 +18,17 @@ type Episode {
   artworks: [Artwork!]
   date: String
   duration: Int
+}
+
+type Artwork {
+  url: String!
+  size: Int
+  type: String
+}
+
+type Color {
+  name: String
+  value: String
 }
 
 type Query {
