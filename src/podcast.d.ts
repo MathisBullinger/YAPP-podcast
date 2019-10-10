@@ -16,6 +16,7 @@ interface Meta {
 interface Episode {
   title?: string
   description?: string
+  content?: string
   date?: string
   file?: string
   duration?: number
