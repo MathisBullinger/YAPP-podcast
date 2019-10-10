@@ -116,6 +116,7 @@ interface EpisodeData {
   duration?: Text
   date?: Text
   description?: Text
+  content?: Text
   link?: Text
   img?: Text
 }
