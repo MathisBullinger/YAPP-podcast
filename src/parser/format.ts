@@ -49,6 +49,7 @@ export default function(pod: PodcastData): Podcast {
       filter({
         title: text(e.title),
         description: data(e.description),
+        content: data(e.content),
         date: date(e.date),
         file: text(e.file),
         duration: duration(e.duration),

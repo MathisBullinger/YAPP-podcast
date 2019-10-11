@@ -10,6 +10,8 @@ export const tags = {
   enclosure: 'ENCLOSURE',
   description: 'DESCRIPTION',
   content: 'CONTENT:ENCODED',
+  fullitem: 'FULLITEM',
+  body: 'BODY',
   itunes: {
     author: 'ITUNES:AUTHOR',
     summary: 'ITUNES:SUMMARY',

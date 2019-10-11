@@ -6,6 +6,18 @@ type Podcast {
   feed: String
   episodes: [Episode!]
   description: String
+  colors: [Color]
+}
+
+type Episode {
+  title: String
+  file: String
+  id: ID!
+  description: String
+  content: String
+  artworks: [Artwork!]
+  date: String
+  duration: Int
 }
 
 type Artwork {
@@ -14,20 +26,15 @@ type Artwork {
   type: String
 }
 
-type Episode {
-  title: String
-  file: String
-  id: ID!
-  description: String
-  subtitle: String
-  artworks: [Artwork!]
-  date: String
-  duration: Int
+type Color {
+  name: String
+  value: String
 }
 
 type Query {
   search(name: String!, first: Int = 20): [Podcast!]!
   podcast(itunesId: ID!): Podcast
+  episode(podcastId: ID!, episodeId: ID!): Episode
 }
 
 schema {
