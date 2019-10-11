@@ -4,6 +4,7 @@ import parse from './parser'
 import uuidv5 from 'uuid/v5'
 
 export async function getPodcast(id: string): Promise<Podcast> {
+  console.log(`get podcast ${id}`)
   const metaQuery = db.get({ podId: id, SK: 'meta' })
   const epQuery = db.client
     .query({
@@ -13,16 +14,19 @@ export async function getPodcast(id: string): Promise<Podcast> {
         '#podId': 'podId',
         '#date': 'date',
         '#file': 'file',
+        '#title': 'title',
+        '#duration': 'duration',
       },
       ExpressionAttributeValues: {
         ':podId': id,
       },
-      ProjectionExpression: 'SK, title, #date, #file',
+      ProjectionExpression: 'SK, #title, #date, #file, #duration',
     })
     .promise()
 
   try {
     const [meta, epResult] = await Promise.all([metaQuery, epQuery])
+    if (!meta) return
     const episodes = (epResult.Items || []).filter(({ SK }) => SK !== 'meta')
     return {
       ...meta,
@@ -37,8 +41,7 @@ export const getEpisode = async (podId: string, SK: string) =>
   await db.get({ podId, SK })
 
 export async function addPodcast(id: string): Promise<Podcast> {
-  console.log('\nADD PODCAST\n')
-
+  console.log(`add podcast ${id}`)
   const feed = await itunes.getFeedUrl(id)
   if (!feed) return
   try {
