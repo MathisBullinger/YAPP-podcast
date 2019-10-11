@@ -8,8 +8,10 @@ export async function getPodcast(id: string): Promise<Podcast> {
     .newQueryBuilder('podcasts')
     .setHashKey('podId', id)
     .execute()
+
   if (!Array.isArray(result) || result.length === 0) return
   const metaIndex = result.findIndex(r => r.SK === 'meta')
+
   return {
     ...result.splice(metaIndex, 1)[0],
     episodes: result,
