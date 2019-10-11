@@ -33,6 +33,9 @@ export async function getPodcast(id: string): Promise<Podcast> {
   }
 }
 
+export const getEpisode = async (podId: string, SK: string) =>
+  await db.get({ podId, SK })
+
 export async function addPodcast(id: string): Promise<Podcast> {
   console.log('\nADD PODCAST\n')
 

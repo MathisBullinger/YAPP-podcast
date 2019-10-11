@@ -20,12 +20,12 @@ export default {
   Query: {
     search: async (root, { name, first }) => await search(name, first),
 
-    podcast: async (root, { itunesId }) => {
-      return (
-        (await library.getPodcast(itunesId)) ||
-        (await library.addPodcast(itunesId))
-      )
-    },
+    podcast: async (root, { itunesId }) =>
+      (await library.getPodcast(itunesId)) ||
+      (await library.addPodcast(itunesId)),
+
+    episode: async (root, { podcastId, episodeId }) =>
+      await library.getEpisode(podcastId, episodeId),
   },
 
   Podcast: {

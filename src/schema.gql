@@ -34,6 +34,7 @@ type Color {
 type Query {
   search(name: String!, first: Int = 20): [Podcast!]!
   podcast(itunesId: ID!): Podcast
+  episode(podcastId: ID!, episodeId: ID!): Episode
 }
 
 schema {
