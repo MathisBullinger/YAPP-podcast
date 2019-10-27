@@ -6,7 +6,7 @@ import { genUnique } from './utils/slug'
 
 export async function getPodcast(id: string): Promise<Podcast> {
   console.log(`get podcast ${id}`)
-  const metaQuery = db.get({ podId: id, SK: 'meta' })
+  const metaQuery = getMeta(id)
   const epQuery = db.client
     .query({
       TableName: 'podcasts',
@@ -38,6 +38,10 @@ export async function getPodcast(id: string): Promise<Podcast> {
   }
 }
 
+export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })
+export const batchGetMeta = (...ids: string[]) =>
+  db.batchGet(ids.map(id => ({ podId: id, SK: 'meta' })))
+
 export const getEpisode = async (podId: string, SK: string) =>
   await db.get({ podId, SK })
 
@@ -58,7 +62,7 @@ export async function addPodcast(id: string): Promise<Podcast> {
           ...((v: string) => (v ? { slug: v } : {}))(
             await genUnique(podcast.name, id)
           ),
-          ...getMeta(podcast),
+          ...extractMeta(podcast),
         },
         ...podcast.episodes.map(e => ({
           podId: id,
@@ -79,7 +83,7 @@ export async function addPodcast(id: string): Promise<Podcast> {
   }
 }
 
-function getMeta(podcast: Podcast): Meta {
+function extractMeta(podcast: Podcast): Meta {
   return Object.fromEntries(
     Object.entries(podcast).filter(([k]) => k !== 'episodes')
   ) as Meta
