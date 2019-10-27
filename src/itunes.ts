@@ -12,7 +12,7 @@ export async function getFeedUrl(id: string): Promise<string> {
 export async function search(
   term: string,
   limit: number
-): Promise<Partial<Podcast>> {
+): Promise<(Partial<Podcast>)[]> {
   const { data } = await axios.get('https://itunes.apple.com/search', {
     params: { media: 'podcast', term, ...(limit && { limit }) },
   })

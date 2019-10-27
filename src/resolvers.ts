@@ -19,7 +19,22 @@ const parseColors = (obj: any) =>
 
 export default {
   Query: {
-    search: async (root, { name, first }) => await search(name, first),
+    search: async (root, { name, first }) =>
+      await Promise.all(
+        (await search(name, first)).map(info => {
+          console.log('id:', (info as any).podId)
+          return library
+            .getPodcast((info as any).podId.toString())
+            .then(
+              res => (
+                console.log(
+                  `${(info as any).podId} source: ${res ? 'DB' : 'itunes'}`
+                ),
+                res || info
+              )
+            )
+        })
+      ),
 
     podcast: async (root, { itunesId }) =>
       (await library.getPodcast(itunesId)) ||
