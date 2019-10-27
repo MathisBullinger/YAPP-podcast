@@ -1,5 +1,6 @@
 import * as library from './library'
 import { search } from './itunes'
+import genSlug from './utils/slug'
 
 const parseArt = (obj: any) =>
   Object.entries(obj)
@@ -32,6 +33,7 @@ export default {
     itunesId: (obj: any) => obj.podId,
     artworks: (obj: any) => obj.artworks || parseArt(obj),
     colors: parseColors,
+    slug: (obj: any) => obj.name && genSlug(obj.name),
   },
 
   Episode: {
