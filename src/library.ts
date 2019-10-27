@@ -2,6 +2,7 @@ import * as db from './dynamodb'
 import * as itunes from './itunes'
 import parse from './parser'
 import uuidv5 from 'uuid/v5'
+import { genUnique } from './utils/slug'
 
 export async function getPodcast(id: string): Promise<Podcast> {
   console.log(`get podcast ${id}`)
@@ -54,6 +55,9 @@ export async function addPodcast(id: string): Promise<Podcast> {
         {
           podId: id,
           SK: 'meta',
+          ...((v: string) => (v ? { slug: v } : {}))(
+            await genUnique(podcast.name, id)
+          ),
           ...getMeta(podcast),
         },
         ...podcast.episodes.map(e => ({

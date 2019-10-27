@@ -1,6 +1,5 @@
 import * as library from './library'
 import { search } from './itunes'
-import genSlug from './utils/slug'
 
 const parseArt = (obj: any) =>
   Object.entries(obj)
@@ -21,9 +20,8 @@ export default {
   Query: {
     search: async (root, { name, first }) =>
       await Promise.all(
-        (await search(name, first)).map(info => {
-          console.log('id:', (info as any).podId)
-          return library
+        (await search(name, first)).map(info =>
+          library
             .getPodcast((info as any).podId.toString())
             .then(
               res => (
@@ -33,7 +31,7 @@ export default {
                 res || info
               )
             )
-        })
+        )
       ),
 
     podcast: async (root, { itunesId }) =>
@@ -48,7 +46,6 @@ export default {
     itunesId: (obj: any) => obj.podId,
     artworks: (obj: any) => obj.artworks || parseArt(obj),
     colors: parseColors,
-    slug: (obj: any) => obj.name && genSlug(obj.name),
   },
 
   Episode: {
