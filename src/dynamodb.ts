@@ -37,7 +37,10 @@ export const get = (key: Key): Promise<Item> =>
       .promise()
       .then(({ Item }) => resolve(Item as any))
       .catch(err => {
-        console.error('[DB] ERROR IN GET:', err.errorMessage)
+        console.error(
+          '[DB] ERROR IN GET:',
+          err.errorMessage || err.message || err
+        )
         reject(err)
       })
   )

@@ -2,9 +2,11 @@ import * as db from './dynamodb'
 import * as itunes from './itunes'
 import parse from './parser'
 import uuidv5 from 'uuid/v5'
+import { genUnique } from './utils/slug'
 
 export async function getPodcast(id: string): Promise<Podcast> {
-  const metaQuery = db.get({ podId: id, SK: 'meta' })
+  console.log(`get podcast ${id}`)
+  const metaQuery = getMeta(id)
   const epQuery = db.client
     .query({
       TableName: 'podcasts',
@@ -13,16 +15,19 @@ export async function getPodcast(id: string): Promise<Podcast> {
         '#podId': 'podId',
         '#date': 'date',
         '#file': 'file',
+        '#title': 'title',
+        '#duration': 'duration',
       },
       ExpressionAttributeValues: {
         ':podId': id,
       },
-      ProjectionExpression: 'SK, title, #date, #file',
+      ProjectionExpression: 'SK, #title, #date, #file, #duration',
     })
     .promise()
 
   try {
     const [meta, epResult] = await Promise.all([metaQuery, epQuery])
+    if (!meta) return
     const episodes = (epResult.Items || []).filter(({ SK }) => SK !== 'meta')
     return {
       ...meta,
@@ -33,12 +38,15 @@ export async function getPodcast(id: string): Promise<Podcast> {
   }
 }
 
+export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })
+export const batchGetMeta = (...ids: string[]) =>
+  db.batchGet(ids.map(id => ({ podId: id, SK: 'meta' })))
+
 export const getEpisode = async (podId: string, SK: string) =>
   await db.get({ podId, SK })
 
 export async function addPodcast(id: string): Promise<Podcast> {
-  console.log('\nADD PODCAST\n')
-
+  console.log(`add podcast ${id}`)
   const feed = await itunes.getFeedUrl(id)
   if (!feed) return
   try {
@@ -51,7 +59,10 @@ export async function addPodcast(id: string): Promise<Podcast> {
         {
           podId: id,
           SK: 'meta',
-          ...getMeta(podcast),
+          ...((v: string) => (v ? { slug: v } : {}))(
+            await genUnique(podcast.name, id)
+          ),
+          ...extractMeta(podcast),
         },
         ...podcast.episodes.map(e => ({
           podId: id,
@@ -72,7 +83,7 @@ export async function addPodcast(id: string): Promise<Podcast> {
   }
 }
 
-function getMeta(podcast: Podcast): Meta {
+function extractMeta(podcast: Podcast): Meta {
   return Object.fromEntries(
     Object.entries(podcast).filter(([k]) => k !== 'episodes')
   ) as Meta

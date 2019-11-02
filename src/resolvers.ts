@@ -18,7 +18,16 @@ const parseColors = (obj: any) =>
 
 export default {
   Query: {
-    search: async (root, { name, first }) => await search(name, first),
+    search: async (root, { name, first }) => {
+      const itResults = await search(name, first)
+      const results = await library.batchGetMeta(
+        ...itResults.map(({ podId }: any) => podId.toString())
+      )
+      return itResults.map(
+        (r: any) =>
+          results.find(({ podId }) => podId === r.podId.toString()) || r
+      )
+    },
 
     podcast: async (root, { itunesId }) =>
       (await library.getPodcast(itunesId)) ||

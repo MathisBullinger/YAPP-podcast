@@ -2,6 +2,7 @@ type Podcast {
   itunesId: ID
   name: String
   creator: String
+  slug: String
   artworks: [Artwork!]
   feed: String
   episodes: [Episode!]
