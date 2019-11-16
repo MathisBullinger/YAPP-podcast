@@ -29,9 +29,16 @@ export default {
       )
     },
 
-    podcast: async (root, { itunesId }) =>
-      (await library.getPodcast(itunesId)) ||
-      (await library.addPodcast(itunesId)),
+    podcast: async (root, { itunesId }, context, info) => {
+      const fields = info.fieldNodes
+        .find(({ name }) => name.value === 'podcast')
+        .selectionSet.selections.filter(({ kind }) => kind === 'Field')
+
+      return (
+        (await library.getPodcast(itunesId, fields)) ||
+        (await library.addPodcast(itunesId))
+      )
+    },
 
     episode: async (root, { podcastId, episodeId }) =>
       await library.getEpisode(podcastId, episodeId),

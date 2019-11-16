@@ -23,3 +23,12 @@ interface Episode {
   link?: string
   img?: string
 }
+
+interface GqlField {
+  name: {
+    value: string
+  }
+  selecionSet: {
+    selections: GqlField[]
+  }
+}

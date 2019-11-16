@@ -4,34 +4,43 @@ import parse from './parser'
 import uuidv5 from 'uuid/v5'
 import { genUnique } from './utils/slug'
 
-export async function getPodcast(id: string): Promise<Podcast> {
+export async function getPodcast(
+  id: string,
+  fields: GqlField[]
+): Promise<Podcast> {
   console.log(`get podcast ${id}`)
-  const metaQuery = getMeta(id)
-  const epQuery = db.client
-    .query({
-      TableName: 'podcasts',
-      KeyConditionExpression: '#podId = :podId',
-      ExpressionAttributeNames: {
-        '#podId': 'podId',
-        '#date': 'date',
-        '#file': 'file',
-        '#title': 'title',
-        '#duration': 'duration',
-      },
-      ExpressionAttributeValues: {
-        ':podId': id,
-      },
-      ProjectionExpression: 'SK, #title, #date, #file, #duration',
-    })
-    .promise()
+  const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
+  const queries: Promise<any>[] = [getMeta(id)]
+  if (queryEpisodes)
+    queries.push(
+      db.client
+        .query({
+          TableName: 'podcasts',
+          KeyConditionExpression: '#podId = :podId',
+          ExpressionAttributeNames: {
+            '#podId': 'podId',
+            '#date': 'date',
+            '#file': 'file',
+            '#title': 'title',
+            '#duration': 'duration',
+          },
+          ExpressionAttributeValues: {
+            ':podId': id,
+          },
+          ProjectionExpression: 'SK, #title, #date, #file, #duration',
+        })
+        .promise()
+    )
 
   try {
-    const [meta, epResult] = await Promise.all([metaQuery, epQuery])
+    const [meta, epResult] = await Promise.all(queries)
     if (!meta) return
-    const episodes = (epResult.Items || []).filter(({ SK }) => SK !== 'meta')
+    const episodes = epResult
+      ? { episodes: (epResult.Items || []).filter(({ SK }) => SK !== 'meta') }
+      : {}
     return {
       ...meta,
-      episodes,
+      ...episodes,
     }
   } catch (e) {
     console.warn(e)

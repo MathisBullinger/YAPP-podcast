@@ -37,10 +37,7 @@ export const get = (key: Key): Promise<Item> =>
       .promise()
       .then(({ Item }) => resolve(Item as any))
       .catch(err => {
-        console.error(
-          '[DB] ERROR IN GET:',
-          err.errorMessage || err.message || err
-        )
+        console.error('[DB] ERROR IN GET:', err.message)
         reject(err)
       })
   )
@@ -52,7 +49,7 @@ export const batchGet = (keys: Key[]): Promise<Item[]> =>
       .promise()
       .then(({ Responses }) => resolve(Responses[table] as any))
       .catch(err => {
-        console.error('[DB] ERROR IN BATCH GET:', err.errorMessage)
+        console.error('[DB] ERROR IN BATCH GET:', err.message)
         reject(err)
       })
   )
@@ -90,7 +87,7 @@ export const update = (
       .promise()
       .then(({ Attributes }) => resolve(Attributes))
       .catch(err => {
-        console.error('[DB] ERROR IN UPDATE:', err.errorMessage)
+        console.error('[DB] ERROR IN UPDATE:', err.message)
         reject(err)
       })
   })
