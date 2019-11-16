@@ -16,6 +16,11 @@ const parseColors = (obj: any) =>
     .filter(([k]) => k.startsWith('cl'))
     .map(([k, v]) => ({ name: k.substring(2), value: v }))
 
+const getFields = (info: any, query: string) =>
+  info.fieldNodes
+    .find(({ name }) => name.value === query)
+    .selectionSet.selections.filter(({ kind }) => kind === 'Field')
+
 export default {
   Query: {
     search: async (root, { name, first }) => {
@@ -29,16 +34,12 @@ export default {
       )
     },
 
-    podcast: async (root, { itunesId }, context, info) => {
-      const fields = info.fieldNodes
-        .find(({ name }) => name.value === 'podcast')
-        .selectionSet.selections.filter(({ kind }) => kind === 'Field')
+    podcast: async (root, { itunesId }, context, info) =>
+      (await library.getPodcast(itunesId, getFields(info, 'podcast'))) ||
+      (await library.addPodcast(itunesId)),
 
-      return (
-        (await library.getPodcast(itunesId, fields)) ||
-        (await library.addPodcast(itunesId))
-      )
-    },
+    podcasts: async (root, { itunesIds }, context, info) =>
+      await library.getPodcasts(itunesIds, getFields(info, 'podcasts')),
 
     episode: async (root, { podcastId, episodeId }) =>
       await library.getEpisode(podcastId, episodeId),

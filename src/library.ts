@@ -11,26 +11,7 @@ export async function getPodcast(
   console.log(`get podcast ${id}`)
   const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
   const queries: Promise<any>[] = [getMeta(id)]
-  if (queryEpisodes)
-    queries.push(
-      db.client
-        .query({
-          TableName: 'podcasts',
-          KeyConditionExpression: '#podId = :podId',
-          ExpressionAttributeNames: {
-            '#podId': 'podId',
-            '#date': 'date',
-            '#file': 'file',
-            '#title': 'title',
-            '#duration': 'duration',
-          },
-          ExpressionAttributeValues: {
-            ':podId': id,
-          },
-          ProjectionExpression: 'SK, #title, #date, #file, #duration',
-        })
-        .promise()
-    )
+  if (queryEpisodes) queries.push(getEpisodes(id))
 
   try {
     const [meta, epResult] = await Promise.all(queries)
@@ -47,9 +28,44 @@ export async function getPodcast(
   }
 }
 
+export async function getPodcasts(ids: string[], fields: GqlField[]) {
+  console.log(`get podcasts ${ids.join()}`)
+  const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
+  const queries: Promise<any>[] = [batchGetMeta(...ids)]
+  if (queryEpisodes) ids.forEach(id => queries.push(getEpisodes(id)))
+  const results = (await Promise.all(queries)).flat()
+  const meta = results.filter(({ SK }) => SK === 'meta')
+  const episodes = results
+    .filter(({ SK }) => SK !== 'meta')
+    .map(({ Items }) => Items)
+  return meta.map((meta, i) => ({
+    ...meta,
+    ...(episodes.length ? { episodes: episodes[i] } : {}),
+  }))
+}
+
 export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })
 export const batchGetMeta = (...ids: string[]) =>
   db.batchGet(ids.map(id => ({ podId: id, SK: 'meta' })))
+
+const getEpisodes = (id: string) =>
+  db.client
+    .query({
+      TableName: 'podcasts',
+      KeyConditionExpression: '#podId = :podId',
+      ExpressionAttributeNames: {
+        '#podId': 'podId',
+        '#date': 'date',
+        '#file': 'file',
+        '#title': 'title',
+        '#duration': 'duration',
+      },
+      ExpressionAttributeValues: {
+        ':podId': id,
+      },
+      ProjectionExpression: 'SK, #title, #date, #file, #duration',
+    })
+    .promise()
 
 export const getEpisode = async (podId: string, SK: string) =>
   await db.get({ podId, SK })
