@@ -25,7 +25,6 @@ export const genUnique = async (name: string, id: string) => {
     podId,
     slug: genSlug(name),
   }))
-  console.log('SLUGS:')
   slugs.forEach(slug => console.log(`${slug.podId}: ${slug.slug}`))
   const slug = genSlug(name)
   const hit = slugs.find(({ slug: gSlug }) => gSlug === slug)

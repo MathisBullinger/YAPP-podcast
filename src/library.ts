@@ -4,10 +4,52 @@ import parse from './parser'
 import uuidv5 from 'uuid/v5'
 import { genUnique } from './utils/slug'
 
-export async function getPodcast(id: string): Promise<Podcast> {
+export async function getPodcast(
+  id: string,
+  fields: GqlField[]
+): Promise<Podcast> {
   console.log(`get podcast ${id}`)
-  const metaQuery = getMeta(id)
-  const epQuery = db.client
+  const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
+  const queries: Promise<any>[] = [getMeta(id)]
+  if (queryEpisodes) queries.push(getEpisodes(id))
+
+  try {
+    const [meta, epResult] = await Promise.all(queries)
+    if (!meta) return
+    const episodes = epResult
+      ? { episodes: (epResult.Items || []).filter(({ SK }) => SK !== 'meta') }
+      : {}
+    return {
+      ...meta,
+      ...episodes,
+    }
+  } catch (e) {
+    console.warn(e)
+  }
+}
+
+export async function getPodcasts(ids: string[], fields: GqlField[]) {
+  console.log(`get podcasts ${ids.join()}`)
+  const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
+  const queries: Promise<any>[] = [batchGetMeta(...ids)]
+  if (queryEpisodes) ids.forEach(id => queries.push(getEpisodes(id)))
+  const results = (await Promise.all(queries)).flat()
+  const meta = results.filter(({ SK }) => SK === 'meta')
+  const episodes = results
+    .filter(({ SK }) => SK !== 'meta')
+    .map(({ Items }) => Items)
+  return meta.map((meta, i) => ({
+    ...meta,
+    ...(episodes.length ? { episodes: episodes[i] } : {}),
+  }))
+}
+
+export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })
+export const batchGetMeta = (...ids: string[]) =>
+  db.batchGet(ids.map(id => ({ podId: id, SK: 'meta' })))
+
+const getEpisodes = (id: string) =>
+  db.client
     .query({
       TableName: 'podcasts',
       KeyConditionExpression: '#podId = :podId',
@@ -24,23 +66,6 @@ export async function getPodcast(id: string): Promise<Podcast> {
       ProjectionExpression: 'SK, #title, #date, #file, #duration',
     })
     .promise()
-
-  try {
-    const [meta, epResult] = await Promise.all([metaQuery, epQuery])
-    if (!meta) return
-    const episodes = (epResult.Items || []).filter(({ SK }) => SK !== 'meta')
-    return {
-      ...meta,
-      episodes,
-    }
-  } catch (e) {
-    console.warn(e)
-  }
-}
-
-export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })
-export const batchGetMeta = (...ids: string[]) =>
-  db.batchGet(ids.map(id => ({ podId: id, SK: 'meta' })))
 
 export const getEpisode = async (podId: string, SK: string) =>
   await db.get({ podId, SK })
