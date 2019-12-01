@@ -29,6 +29,19 @@ export async function getPodcast(
 }
 
 export async function getPodcasts(ids: string[], fields: GqlField[]) {
+  ids = ids.filter(id => id)
+  if (ids.length === 0) return []
+
+  if (ids.length > 100) {
+    const podcasts = await Promise.all(
+      new Array(Math.ceil(ids.length % 100))
+        .fill([])
+        .map((_, i) => ids.slice(i * 100, (i + 1) * 100))
+        .map(subIds => getPodcasts(subIds, fields))
+    )
+    return podcasts.reduce((a, b) => [...a, ...b])
+  }
+
   console.log(`get podcasts ${ids.join()}`)
   const queryEpisodes = fields.find(({ name }) => name.value === 'episodes')
   const queries: Promise<any>[] = [batchGetMeta(...ids)]
