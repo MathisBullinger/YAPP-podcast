@@ -1,4 +1,12 @@
 import * as db from './dynamodb'
+import { getFeedUrl } from './itunes'
+import axios from 'axios'
+import parse from './queries/parseFeedClean.gql'
+
+const parserUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:7000'
+    : 'https://583wk0p9tb.execute-api.us-east-1.amazonaws.com/prod/'
 
 export async function getPodcast(
   id: string,
@@ -51,6 +59,22 @@ export async function getPodcasts(ids: string[], fields: GqlField[]) {
     ...meta,
     ...(episodes.length ? { episodes: episodes[i] } : {}),
   }))
+}
+
+export async function getNewPodcast(id: string) {
+  try {
+    const feed = await getFeedUrl(id)
+    const { data } = await axios.post(parserUrl, {
+      query: parse.loc.source.body,
+      variables: {
+        feed,
+      },
+    })
+    return data.data.parse
+  } catch (e) {
+    console.error(e)
+    return {}
+  }
 }
 
 export const getMeta = (podId: string) => db.get({ podId, SK: 'meta' })

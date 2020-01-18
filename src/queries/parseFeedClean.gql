@@ -1,0 +1,26 @@
+mutation parseFeedClean($feed: String) {
+  parse(url: $feed) {
+    name
+    creator
+    website
+    language
+    description {
+      short
+      long
+    }
+    publisher {
+      name
+      email
+    }
+    image
+    episodes {
+      title
+      file
+      date
+      season
+      episode
+      type
+      duration
+    }
+  }
+}
