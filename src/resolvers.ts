@@ -35,8 +35,7 @@ export default {
     },
 
     podcast: async (root, { itunesId }, context, info) =>
-      (await library.getPodcast(itunesId, getFields(info, 'podcast'))) ||
-      (await library.addPodcast(itunesId)),
+      await library.getPodcast(itunesId, getFields(info, 'podcast')),
 
     podcasts: async (root, { itunesIds }, context, info) =>
       await library.getPodcasts(itunesIds, getFields(info, 'podcasts')),
