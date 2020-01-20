@@ -63,8 +63,11 @@ export default {
     artworks: parseArt,
     id: (obj: any) => obj.SK,
     duration: () => 0,
-    date: ({ date }: any) =>
-      !date ? '0' : new Date(date).getTime().toString(),
+    date: ({ date }: any) => {
+      const parsed = parseInt(date, 10)
+      if (!isNaN(parsed)) return parsed
+      return !date ? '0' : new Date(date).getTime().toString()
+    },
     descr: (obj: any) => ({
       short: obj.description_short,
       long: obj.description_long,
