@@ -36,7 +36,7 @@ export default {
 
     podcast: async (root, { itunesId }, context, info) =>
       (await library.getPodcast(itunesId, getFields(info, 'podcast'))) ||
-      (await library.addPodcast(itunesId)),
+      (await library.getNewPodcast(itunesId)),
 
     podcasts: async (root, { itunesIds }, context, info) =>
       await library.getPodcasts(itunesIds, getFields(info, 'podcasts')),
@@ -46,13 +46,38 @@ export default {
   },
 
   Podcast: {
-    itunesId: (obj: any) => obj.podId,
+    id: (obj: any) => obj.id || obj.podId,
+    itunesId: (obj: any) => obj.id || obj.podId,
     artworks: (obj: any) => obj.artworks || parseArt(obj),
+    descr: (obj: any) => ({
+      short: obj.description_short,
+      long: obj.description_long,
+    }),
+    description: (obj: any) =>
+      typeof obj.description === 'string'
+        ? obj.description
+        : '\u200c' + (obj.description_short || obj.description_long),
     colors: parseColors,
   },
 
   Episode: {
     artworks: parseArt,
-    id: (obj: any) => obj.SK,
+    id: (obj: any) => obj.id || obj.SK,
+    duration: () => 0,
+    date: ({ date }: any) => {
+      const parsed = parseInt(date, 10)
+      if (!isNaN(parsed)) return parsed
+      return !date ? '0' : new Date(date).getTime().toString()
+    },
+    descr: (obj: any) => ({
+      short: obj.description_short,
+      long: obj.description_long,
+    }),
+    description: (obj: any) =>
+      typeof obj.description === 'string'
+        ? obj.description
+        : '\u200c' + (obj.description_short || obj.description_long),
+    content: (obj: any) =>
+      obj.content || '\u200c' + (obj.description_long || obj.description_short),
   },
 }

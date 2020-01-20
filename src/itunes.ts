@@ -12,26 +12,31 @@ export async function getFeedUrl(id: string): Promise<string> {
 export async function search(
   term: string,
   limit?: number
-): Promise<(Partial<Podcast>)[]> {
-  const { data } = await axios.get('https://itunes.apple.com/search', {
-    params: { media: 'podcast', term, ...(limit && { limit }) },
-  })
+): Promise<Partial<Podcast>[]> {
+  try {
+    const { data } = await axios.get('https://itunes.apple.com/search', {
+      params: { media: 'podcast', term, ...(limit && { limit }) },
+    })
 
-  const translation = {
-    collectionId: 'podId',
-    artistName: 'creator',
-    collectionName: 'name',
-    feedUrl: 'feed',
+    const translation = {
+      collectionId: 'podId',
+      artistName: 'creator',
+      collectionName: 'name',
+      feedUrl: 'feed',
+    }
+    return data.results.map(result => ({
+      ...translateKeys(result, translation),
+      ...{
+        artworks: Object.entries(result)
+          .filter(([k]) => k.startsWith('artwork'))
+          .map(([k, v]) => ({
+            url: v,
+            size: parseInt(k.split('Url').pop(), 10),
+          })),
+      },
+    }))
+  } catch (e) {
+    console.error(e)
+    throw e
   }
-  return data.results.map(result => ({
-    ...translateKeys(result, translation),
-    ...{
-      artworks: Object.entries(result)
-        .filter(([k]) => k.startsWith('artwork'))
-        .map(([k, v]) => ({
-          url: v,
-          size: parseInt(k.split('Url').pop(), 10),
-        })),
-    },
-  }))
 }
