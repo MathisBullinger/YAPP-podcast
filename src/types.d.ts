@@ -1,4 +1,5 @@
 interface Podcast {
+  id: string
   name: string
   creator: string
   website: string
@@ -34,7 +35,7 @@ interface Episode {
   season: string
   episode: string
   type: string
-  duration: string
+  duration: number
 }
 
 interface GqlField {

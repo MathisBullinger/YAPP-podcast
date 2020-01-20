@@ -1,8 +1,9 @@
-mutation parseFeedClean($feed: String) {
-  parse(url: $feed) {
+mutation parseFeedClean($feed: String, $id: ID) {
+  parse(url: $feed, id: $id) {
     name
     creator
     website
+    feed
     language
     description {
       short

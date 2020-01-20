@@ -46,13 +46,33 @@ export default {
   },
 
   Podcast: {
-    itunesId: (obj: any) => obj.podId,
+    id: (obj: any) => obj.id || obj.podId,
+    itunesId: (obj: any) => obj.id || obj.podId,
     artworks: (obj: any) => obj.artworks || parseArt(obj),
+    descr: (obj: any) => ({
+      short: obj.description_short,
+      long: obj.description_long,
+    }),
+    description: (obj: any) =>
+      obj.description ||
+      '\u200c' + (obj.description_short || obj.description_long),
     colors: parseColors,
   },
 
   Episode: {
     artworks: parseArt,
     id: (obj: any) => obj.SK,
+    duration: () => 0,
+    date: ({ date }: any) =>
+      !date ? '0' : new Date(date).getTime().toString(),
+    descr: (obj: any) => ({
+      short: obj.description_short,
+      long: obj.description_long,
+    }),
+    description: (obj: any) =>
+      obj.description ||
+      '\u200c' + (obj.description_short || obj.description_long),
+    content: (obj: any) =>
+      obj.content || '\u200c' + (obj.description_long || obj.description_short),
   },
 }

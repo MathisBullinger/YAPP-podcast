@@ -1,13 +1,16 @@
 type Podcast {
+  id: ID
+  itunesId: ID @deprecated(reason: "Use `id`.")
   name: String
   creator: String
   website: String
   language: String
-  description: Description
+  descr: Description
+  description: String @deprecated(reason: "Use `descr`.")
   publisher: Publisher
   categories: [String]
   lastBuild: String
-  image: String
+  artworks: [Artwork]
   websub: WebSub
   colors: [Color]
   feed: String
@@ -15,15 +18,19 @@ type Podcast {
 }
 
 type Episode {
+  id: ID!
   title: String
   file: String
   date: String
-  description: Description
+  descr: Description
+  description: String @deprecated(reason: "Use `descr.`")
+  content: String @deprecated(reason: "Use `descr`.")
   image: String
   season: String
   episode: String
   type: String
-  duration: String
+  duration: Int
+  artworks: [Artwork]
 }
 
 type Description {
@@ -44,6 +51,12 @@ type WebSub {
 type Color {
   name: String
   value: String
+}
+
+type Artwork {
+  url: String!
+  size: Int
+  type: String
 }
 
 type Query {
