@@ -68,9 +68,10 @@ export async function getNewPodcast(id: string) {
       query: parse.loc.source.body,
       variables: {
         feed,
+        id,
       },
     })
-    return data.data.parse
+    return { ...data.data.parse, id, itunesId: id }
   } catch (e) {
     console.error(e)
     return {}

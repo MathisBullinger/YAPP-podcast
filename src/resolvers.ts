@@ -54,14 +54,15 @@ export default {
       long: obj.description_long,
     }),
     description: (obj: any) =>
-      obj.description ||
-      '\u200c' + (obj.description_short || obj.description_long),
+      typeof obj.description === 'string'
+        ? obj.description
+        : '\u200c' + (obj.description_short || obj.description_long),
     colors: parseColors,
   },
 
   Episode: {
     artworks: parseArt,
-    id: (obj: any) => obj.SK,
+    id: (obj: any) => obj.id || obj.SK,
     duration: () => 0,
     date: ({ date }: any) => {
       const parsed = parseInt(date, 10)
@@ -73,8 +74,9 @@ export default {
       long: obj.description_long,
     }),
     description: (obj: any) =>
-      obj.description ||
-      '\u200c' + (obj.description_short || obj.description_long),
+      typeof obj.description === 'string'
+        ? obj.description
+        : '\u200c' + (obj.description_short || obj.description_long),
     content: (obj: any) =>
       obj.content || '\u200c' + (obj.description_long || obj.description_short),
   },

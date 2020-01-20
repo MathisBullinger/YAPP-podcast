@@ -15,6 +15,7 @@ mutation parseFeedClean($feed: String, $id: ID) {
     }
     image
     episodes {
+      id
       title
       file
       date
