@@ -56,38 +56,3 @@ export const batchGet = (keys: Key[]): Promise<Item[]> =>
 
 export const put = (item: Item) =>
   docClient.put({ TableName: table, Item: item }).promise()
-
-export const update = (
-  key: Key,
-  props: { [key: string]: string | number }
-): Promise<{ [prop: string]: any }> =>
-  new Promise((resolve, reject) => {
-    if (Object.entries(props).length === 0) {
-      reject('must have properties')
-      return
-    }
-    docClient
-      .update({
-        TableName: table,
-        Key: key,
-        UpdateExpression: `set ${Object.keys(props)
-          .map(k => `${k}=:${k}`)
-          .join(', ')}`,
-        ConditionExpression: 'podId = :podId AND SK = :SK',
-        ExpressionAttributeValues: {
-          ...Object.entries(props).reduce(
-            (a, [k, v]) => ({ ...a, ...{ [`:${k}`]: v } }),
-            {}
-          ),
-          ':podId': key.podId,
-          ':SK': key.SK,
-        },
-        ReturnValues: 'UPDATED_NEW',
-      })
-      .promise()
-      .then(({ Attributes }) => resolve(Attributes))
-      .catch(err => {
-        console.error('[DB] ERROR IN UPDATE:', err.message)
-        reject(err)
-      })
-  })

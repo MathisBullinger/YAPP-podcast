@@ -1,35 +1,62 @@
 type Podcast {
-  itunesId: ID
+  id: ID
+  itunesId: ID @deprecated(reason: "Use `id`.")
   name: String
   creator: String
-  slug: String
-  artworks: [Artwork!]
-  feed: String
-  episodes: [Episode!]
-  description: String
+  website: String
+  language: String
+  descr: Description
+  description: String @deprecated(reason: "Use `descr`.")
+  publisher: Publisher
+  categories: [String]
+  lastBuild: String
+  artworks: [Artwork]
+  websub: WebSub
   colors: [Color]
+  feed: String
+  episodes: [Episode]
 }
 
 type Episode {
+  id: ID!
   title: String
   file: String
-  id: ID!
-  description: String
-  content: String
-  artworks: [Artwork!]
   date: String
+  descr: Description
+  description: String @deprecated(reason: "Use `descr.`")
+  content: String @deprecated(reason: "Use `descr`.")
+  image: String
+  season: String
+  episode: String
+  type: String
   duration: Int
+  artworks: [Artwork]
+}
+
+type Description {
+  short: String
+  long: String
+}
+
+type Publisher {
+  name: String
+  email: String
+}
+
+type WebSub {
+  hub: String
+  url: String
+}
+
+type Color {
+  name: String
+  value: String
 }
 
 type Artwork {
   url: String!
   size: Int
   type: String
-}
-
-type Color {
-  name: String
-  value: String
 }
 
 type Query {
