@@ -29,7 +29,7 @@
     "@apollo/federation": "^0.7.2",
     "@babel/runtime": "^7.8.3",
     "@sentry/node": "^5.11.1",
-    "apollo-server-lambda": "^2.9.16",
+    "apollo-server-lambda": "^2.14.2",
     "axios": "^0.19.1",
     "dynamite": "^0.10.1",
     "graphql": "^14.5.8",
